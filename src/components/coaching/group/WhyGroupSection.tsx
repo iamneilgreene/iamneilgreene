@@ -2,20 +2,20 @@ import PageContainer from '@/components/layout/PageContainer'
 
 export default function WhyGroupSection() {
   return (
-    <section className="bg-[#141414] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer width="narrow">
         <div className="flex flex-col gap-10">
 
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
               The Foundation
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               Why Group Coaching Exists
             </h2>
           </div>
 
-          <div className="flex flex-col gap-6 text-base leading-relaxed text-[#9a9590]">
+          <div className="flex flex-col gap-6 text-base leading-relaxed text-[#3d3530]">
             <p>
               Some men do not need full private access to change. They need a serious container,
               a stronger room, and a standard outside themselves that makes drift harder to
@@ -35,7 +35,7 @@ export default function WhyGroupSection() {
           </div>
 
           <div className="border-l-2 border-[#b8975a] pl-5">
-            <p className="font-display text-sm italic leading-relaxed text-[#9a9590] md:text-base">
+            <p className="font-display text-sm italic leading-relaxed text-[#6b6158] md:text-base">
               A serious room changes what a man is willing to tolerate from himself.
             </p>
           </div>

@@ -12,19 +12,19 @@ const features = [
 
 export default function BookPreviewSection() {
   return (
-    <section className="bg-[#0d0d0d] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer>
         <div className="flex flex-col gap-14">
 
           {/* Header */}
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
               The Book
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               Start With the Book That Puts Structure Back in Your Hands
             </h2>
-            <p className="max-w-2xl text-base leading-relaxed text-[#9a9590]">
+            <p className="max-w-2xl text-base leading-relaxed text-[#6b6158]">
               Not every man starts with coaching. Some need a place to reestablish command on
               their own first. Ignite: Fitness Fuel for Working Dads was built for working men
               who need a practical way to rebuild strength, consistency, and physical discipline
@@ -59,11 +59,11 @@ export default function BookPreviewSection() {
 
             {/* Book detail */}
             <div className="flex flex-col gap-7">
-              <h3 className="font-display text-2xl font-semibold text-[#f4f1ec]">
+              <h3 className="font-display text-2xl font-semibold text-[#1a1a1a]">
                 Ignite: Fitness Fuel for Working Dads
               </h3>
 
-              <p className="text-base leading-relaxed text-[#9a9590]">
+              <p className="text-base leading-relaxed text-[#6b6158]">
                 This is not motivation in book form. It is a practical standard for men who
                 are tired of falling off, starting over, and negotiating with habits they
                 should have mastered by now. Ignite gives you a cleaner path back to
@@ -72,7 +72,7 @@ export default function BookPreviewSection() {
 
               <ul className="flex flex-col gap-2.5">
                 {features.map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-sm text-[#9a9590]">
+                  <li key={f} className="flex items-start gap-3 text-sm text-[#6b6158]">
                     <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 bg-[#b8975a]" />
                     {f}
                   </li>
@@ -80,7 +80,7 @@ export default function BookPreviewSection() {
               </ul>
 
               <div className="border-l-2 border-[#b8975a] pl-5 pt-2">
-                <p className="font-display text-sm italic text-[#9a9590]">
+                <p className="font-display text-sm italic text-[#6b6158]">
                   Before a man is led well, he often has to learn how to lead himself again.
                 </p>
               </div>

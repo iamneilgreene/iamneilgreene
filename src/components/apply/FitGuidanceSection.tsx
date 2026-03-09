@@ -48,35 +48,35 @@ const fits = [
 
 export default function FitGuidanceSection() {
   return (
-    <section className="bg-[#141414] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer>
         <div className="flex flex-col gap-12">
 
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a9590]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#6b6158]">
               Self-Assessment
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               Who Should Apply for What
             </h2>
-            <p className="max-w-2xl text-base leading-relaxed text-[#9a9590]">
+            <p className="max-w-2xl text-base leading-relaxed text-[#6b6158]">
               If you are unsure where to start, use this as a simple filter. The goal is not to
               choose the highest tier. The goal is to choose the container most likely to move you.
             </p>
           </div>
 
-          <div className="grid gap-px bg-[#2e2e2e] md:grid-cols-3">
+          <div className="grid gap-px bg-[#cfc8bb] md:grid-cols-3">
             {fits.map((fit) => (
               <div
                 key={fit.label}
-                className="flex flex-col gap-6 bg-[#141414] p-8"
+                className="flex flex-col gap-6 bg-[#eae5dc] p-8"
               >
-                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+                <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
                   {fit.label}
                 </p>
                 <ul className="flex flex-col gap-3 flex-1">
                   {fit.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-[#9a9590]">
+                    <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-[#6b6158]">
                       <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 bg-[#b8975a]" />
                       {item}
                     </li>
@@ -89,8 +89,8 @@ export default function FitGuidanceSection() {
             ))}
           </div>
 
-          <div className="border border-[#2e2e2e] p-8">
-            <p className="font-display text-sm italic leading-relaxed text-[#9a9590] md:text-base">
+          <div className="border border-[#cfc8bb] p-8">
+            <p className="font-display text-sm italic leading-relaxed text-[#6b6158] md:text-base">
               The best choice is the one that meets your honesty, not your ego.
             </p>
           </div>

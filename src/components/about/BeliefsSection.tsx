@@ -25,36 +25,36 @@ const beliefs = [
 
 export default function BeliefsSection() {
   return (
-    <section className="bg-[#141414] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer>
         <div className="flex flex-col gap-12">
 
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
               Core Convictions
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               What Neil Believes
             </h2>
           </div>
 
           {/* Beliefs list */}
-          <div className="flex flex-col border-t border-[#2e2e2e]">
+          <div className="flex flex-col border-t border-[#cfc8bb]">
             {beliefs.map((belief, i) => (
               <div
                 key={belief.statement}
-                className="grid gap-6 border-b border-[#2e2e2e] py-8 md:grid-cols-[4rem_1fr_2fr] md:gap-10 md:items-start"
+                className="grid gap-6 border-b border-[#cfc8bb] py-8 md:grid-cols-[4rem_1fr_2fr] md:gap-10 md:items-start"
               >
                 {/* Number */}
-                <span className="font-display text-4xl font-semibold leading-none text-[#2e2e2e] md:text-5xl">
+                <span className="font-display text-4xl font-semibold leading-none text-[#cfc8bb] md:text-5xl">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 {/* Statement */}
-                <p className="font-display text-lg font-semibold leading-snug text-[#f4f1ec]">
+                <p className="font-display text-lg font-semibold leading-snug text-[#1a1a1a]">
                   {belief.statement}
                 </p>
                 {/* Body */}
-                <p className="text-sm leading-relaxed text-[#9a9590] md:text-base">
+                <p className="text-sm leading-relaxed text-[#6b6158] md:text-base">
                   {belief.body}
                 </p>
               </div>
@@ -63,7 +63,7 @@ export default function BeliefsSection() {
 
           {/* Closing line */}
           <div className="border-l-2 border-[#b8975a] pl-5">
-            <p className="font-display text-sm italic leading-relaxed text-[#9a9590] md:text-base">
+            <p className="font-display text-sm italic leading-relaxed text-[#6b6158] md:text-base">
               This work is built on a simple conviction: men do not need more noise. They need
               stronger standards, sharper accountability, and the courage to live under both.
             </p>

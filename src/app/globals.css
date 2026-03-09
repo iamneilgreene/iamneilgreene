@@ -12,7 +12,23 @@
   --color-brand-subtle:  #9a9590;
   --color-brand-gold:    #b8975a;
   --color-brand-gold-light: #d4af72;
+  --color-brand-gold-dark:  #9a7d45;
   --color-brand-white:   #f4f1ec;
+
+  /* Light background family (warm stone) */
+  --color-brand-stone:        #eae5dc;
+  --color-brand-stone-dark:   #ddd7cc;
+
+  /* Improved dark card surface */
+  --color-brand-surface:      #181818;
+
+  /* Text colors for light backgrounds */
+  --color-brand-ink:          #1a1a1a;
+  --color-brand-ink-body:     #3d3530;
+  --color-brand-ink-subtle:   #6b6158;
+
+  /* Borders on light backgrounds */
+  --color-brand-border-light: #cfc8bb;
 
   /* Typography */
   --font-display: var(--font-playfair);

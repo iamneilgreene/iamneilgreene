@@ -66,7 +66,7 @@ export default function PathsSection() {
             {paths.map((path) => (
               <div
                 key={path.title}
-                className={`flex flex-col gap-6 border ${path.borderClass} bg-[#0f0f0f] p-8`}
+                className={`flex flex-col gap-6 border ${path.borderClass} bg-[#181818] p-8`}
               >
                 <div className="flex flex-col gap-2">
                   <span className={`text-[0.65rem] font-semibold uppercase tracking-[0.25em] ${path.eyebrowColor}`}>

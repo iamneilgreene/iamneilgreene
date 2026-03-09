@@ -6,7 +6,7 @@ interface SectionWrapperProps {
   /** Semantic HTML element to render */
   as?: 'section' | 'div' | 'article' | 'aside'
   /** Visual background variant */
-  variant?: 'default' | 'dark' | 'charcoal' | 'bordered'
+  variant?: 'default' | 'dark' | 'charcoal' | 'bordered' | 'light'
   /** Vertical padding size */
   spacing?: 'sm' | 'md' | 'lg' | 'none'
 }
@@ -34,6 +34,7 @@ export default function SectionWrapper({
           'bg-brand-dark': variant === 'dark',
           'bg-brand-charcoal': variant === 'charcoal',
           'bg-brand-black border-y border-brand-border': variant === 'bordered',
+          'bg-brand-stone': variant === 'light',
         },
         className
       )}

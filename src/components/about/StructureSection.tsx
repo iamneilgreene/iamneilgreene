@@ -38,18 +38,18 @@ const paths = [
 
 export default function StructureSection() {
   return (
-    <section className="bg-[#141414] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer>
         <div className="flex flex-col gap-12">
 
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
               Paths to Work Together
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               How the Work Is Structured
             </h2>
-            <p className="max-w-2xl text-base leading-relaxed text-[#9a9590]">
+            <p className="max-w-2xl text-base leading-relaxed text-[#6b6158]">
               Not every man needs the same level of access. Not every room needs the same message.
               But every path Neil offers is built around the same foundation: structure,
               accountability, and a standard that holds when pressure rises.
@@ -60,7 +60,7 @@ export default function StructureSection() {
             {paths.map((path) => (
               <div
                 key={path.title}
-                className={`flex flex-col gap-5 border p-8 ${
+                className={`flex flex-col gap-5 border p-8 bg-[#0d0d0d] ${
                   path.highlight ? 'border-[#b8975a]/30' : 'border-[#2e2e2e]'
                 }`}
               >
@@ -80,7 +80,7 @@ export default function StructureSection() {
 
           {/* Closing line */}
           <div className="text-center">
-            <p className="font-display text-base italic text-[#9a9590]">
+            <p className="font-display text-base italic text-[#6b6158]">
               Different doors. One standard.
             </p>
           </div>

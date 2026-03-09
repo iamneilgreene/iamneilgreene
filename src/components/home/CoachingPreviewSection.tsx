@@ -3,19 +3,19 @@ import Button from '@/components/ui/Button'
 
 export default function CoachingPreviewSection() {
   return (
-    <section className="bg-[#0d0d0d] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer>
         <div className="flex flex-col gap-14">
 
           {/* Header */}
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
               Coaching
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               Choose the Standard You&rsquo;re Ready to Carry
             </h2>
-            <p className="max-w-2xl text-base leading-relaxed text-[#9a9590]">
+            <p className="max-w-2xl text-base leading-relaxed text-[#6b6158]">
               Men do not fail because they lack information. They fail because they lack
               structure, accountability, and a standard strong enough to correct them when
               drift returns. Forged By War gives you two ways to rebuild, depending on the
@@ -23,11 +23,11 @@ export default function CoachingPreviewSection() {
             </p>
           </div>
 
-          {/* Two offer cards */}
+          {/* Two offer cards — dark cards on light bg for contrast */}
           <div className="grid gap-6 md:grid-cols-2">
 
             {/* Forged By War Private */}
-            <div className="flex flex-col gap-7 border border-[#b8975a]/30 bg-[#0f0f0f] p-10 transition-colors duration-200 hover:border-[#b8975a]/60">
+            <div className="flex flex-col gap-7 border border-[#b8975a]/30 bg-[#0d0d0d] p-10 transition-colors duration-200 hover:border-[#b8975a]/60">
               <div className="flex flex-col gap-2">
                 <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
                   Flagship Offer
@@ -57,7 +57,7 @@ export default function CoachingPreviewSection() {
             </div>
 
             {/* Forged By War Cohort */}
-            <div className="flex flex-col gap-7 border border-[#2e2e2e] bg-[#0f0f0f] p-10 transition-colors duration-200 hover:border-[#b8975a]/40">
+            <div className="flex flex-col gap-7 border border-[#2e2e2e] bg-[#0d0d0d] p-10 transition-colors duration-200 hover:border-[#b8975a]/40">
               <div className="flex flex-col gap-2">
                 <span className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-[#9a9590]">
                   Quarterly Intake
@@ -89,8 +89,8 @@ export default function CoachingPreviewSection() {
           </div>
 
           {/* Closing line */}
-          <div className="border-t border-[#2e2e2e] pt-7 text-center">
-            <p className="font-display text-base italic text-[#9a9590]">
+          <div className="border-t border-[#cfc8bb] pt-7 text-center">
+            <p className="font-display text-base italic text-[#6b6158]">
               The question is not whether you need more motivation. The question is whether
               you are ready to be held to a higher standard.
             </p>

@@ -30,20 +30,20 @@ const paths = [
 
 export default function BookBridgeSection() {
   return (
-    <section className="bg-[#141414] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer>
         <div className="flex flex-col gap-12">
 
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
               Next Steps
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               What Comes Next After the Book
             </h2>
           </div>
 
-          <div className="flex flex-col gap-6 text-base leading-relaxed text-[#9a9590] max-w-3xl">
+          <div className="flex flex-col gap-6 text-base leading-relaxed text-[#3d3530] max-w-3xl">
             <p>
               For many men, Ignite is the first move. It helps them rebuild physical discipline,
               tighten standards, and regain traction. But for some, the book does more than help
@@ -57,16 +57,16 @@ export default function BookBridgeSection() {
             </p>
           </div>
 
-          <div className="grid gap-px border border-[#2e2e2e] md:grid-cols-3">
+          <div className="grid gap-px border border-[#cfc8bb] md:grid-cols-3">
             {paths.map((path) => (
               <div
                 key={path.title}
-                className="flex flex-col gap-6 bg-[#141414] p-8"
+                className="flex flex-col gap-6 bg-[#eae5dc] p-8"
               >
-                <h3 className="font-display text-xl font-semibold text-[#f4f1ec]">
+                <h3 className="font-display text-xl font-semibold text-[#1a1a1a]">
                   {path.title}
                 </h3>
-                <p className="flex-1 text-sm leading-relaxed text-[#9a9590]">{path.body}</p>
+                <p className="flex-1 text-sm leading-relaxed text-[#6b6158]">{path.body}</p>
                 <Button href={path.href} variant={path.variant} size="md">
                   {path.cta}
                 </Button>
@@ -75,7 +75,7 @@ export default function BookBridgeSection() {
           </div>
 
           <div className="text-center">
-            <p className="font-display text-base italic text-[#9a9590]">
+            <p className="font-display text-base italic text-[#6b6158]">
               The book can stand on its own. But for the right man, it can also be the doorway
               into a stronger standard.
             </p>

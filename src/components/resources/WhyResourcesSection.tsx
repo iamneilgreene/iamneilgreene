@@ -2,17 +2,17 @@ import PageContainer from '@/components/layout/PageContainer'
 
 export default function WhyResourcesSection() {
   return (
-    <section className="bg-[#141414] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer width="narrow">
         <div className="flex flex-col gap-10">
 
           <div className="flex flex-col gap-5">
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               Why These Resources Exist
             </h2>
           </div>
 
-          <div className="flex flex-col gap-6 text-base leading-relaxed text-[#9a9590]">
+          <div className="flex flex-col gap-6 text-base leading-relaxed text-[#3d3530]">
             <p>
               Most men do not need more content. They need a clear entry point. A tool they can
               use. A framework they can apply. A standard they can begin living before they are
@@ -31,7 +31,7 @@ export default function WhyResourcesSection() {
           </div>
 
           <div className="border-l-2 border-[#b8975a] pl-5">
-            <p className="font-display text-sm italic leading-relaxed text-[#9a9590] md:text-base">
+            <p className="font-display text-sm italic leading-relaxed text-[#6b6158] md:text-base">
               A strong resource does not just inform a man. It gives him a way to begin.
             </p>
           </div>

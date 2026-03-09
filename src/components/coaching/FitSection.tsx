@@ -32,33 +32,33 @@ const fits = [
 
 export default function FitSection() {
   return (
-    <section className="bg-[#141414] py-20 md:py-28">
+    <section className="bg-[#eae5dc] py-20 md:py-28">
       <PageContainer>
         <div className="flex flex-col gap-12">
 
           <div className="flex flex-col gap-5">
-            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#b8975a]">
+            <span className="text-[0.7rem] font-semibold uppercase tracking-[0.25em] text-[#9a7d45]">
               Making the Right Choice
             </span>
-            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#f4f1ec] md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-tight text-[#1a1a1a] md:text-4xl">
               Which Path Fits You
             </h2>
-            <p className="max-w-2xl text-base leading-relaxed text-[#9a9590]">
+            <p className="max-w-2xl text-base leading-relaxed text-[#6b6158]">
               The best path is not the most expensive one. It is the one that matches the level
               of correction, access, and accountability you need right now.
             </p>
           </div>
 
-          <div className="grid gap-8 border border-[#2e2e2e] md:grid-cols-3 md:gap-0 md:divide-x md:divide-[#2e2e2e]">
+          <div className="grid gap-8 border border-[#cfc8bb] md:grid-cols-3 md:gap-0 md:divide-x md:divide-[#cfc8bb]">
             {fits.map((fit) => (
               <div key={fit.label} className="flex flex-col gap-6 p-8">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-[#b8975a]">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-[#9a7d45]">
                   {fit.label}
                 </p>
-                <span className="block h-px bg-[#2e2e2e]" />
+                <span className="block h-px bg-[#cfc8bb]" />
                 <ul className="flex flex-col gap-4">
                   {fit.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm text-[#9a9590]">
+                    <li key={item} className="flex items-start gap-3 text-sm text-[#6b6158]">
                       <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 bg-[#b8975a]" />
                       {item}
                     </li>
@@ -70,7 +70,7 @@ export default function FitSection() {
 
           {/* Closing line */}
           <div className="border-l-2 border-[#b8975a] pl-5">
-            <p className="font-display text-sm italic leading-relaxed text-[#9a9590] md:text-base">
+            <p className="font-display text-sm italic leading-relaxed text-[#6b6158] md:text-base">
               Do not choose based on ego. Choose based on the level of structure your life
               actually requires.
             </p>
