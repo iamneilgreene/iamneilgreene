@@ -82,15 +82,18 @@ export default function SpeakingBookingSection() {
             </div>
           </div>
 
-          <div className="overflow-hidden border border-[#2e2e2e]">
+          <div className="relative overflow-hidden border border-[#2e2e2e]">
             <Cal
               calLink="neilgreene/speaking"
               style={{ width: '100%', height: '100%', overflow: 'scroll', minHeight: '500px' }}
               config={{
                 layout: 'month_view',
                 theme: 'dark',
+                hideBranding: '1',
               }}
             />
+            {/* Covers the Cal.com branding footer */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-[#141414]" />
           </div>
         </div>
       </PageContainer>

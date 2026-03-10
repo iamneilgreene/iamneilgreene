@@ -27,10 +27,9 @@ export const CTA_SECONDARY = { label: 'Contact', href: '/contact' }
 
 /* ─── Social Links ────────────────────────────────────────────────────── */
 export const SOCIAL_LINKS = [
-  { label: 'Instagram', href: '#', handle: '@iamneilgreene' },
-  { label: 'LinkedIn', href: '#', handle: 'Neil Greene' },
-  { label: 'YouTube', href: '#', handle: 'Neil Greene' },
-  { label: 'Podcast', href: '#', handle: 'Forged By War' },
+  { label: 'Instagram', href: 'https://instagram.com/iamneilgreene', handle: '@iamneilgreene' },
+  { label: 'YouTube', href: 'https://www.youtube.com/@IAmNeilGreene', handle: 'Neil Greene' },
+  { label: 'Facebook', href: 'https://www.facebook.com/king0neil/', handle: 'Neil Greene' },
 ] as const
 
 /* ─── Footer ──────────────────────────────────────────────────────────── */
