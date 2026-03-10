@@ -1,17 +1,13 @@
 import PageContainer from '@/components/layout/PageContainer'
 import Button from '@/components/ui/Button'
 
-// TODO: Wire to Private Coaching application form when ready
-const PRIVATE_COACHING_HREF = '/contact'
-
-// TODO: Wire to Group Coaching Cohort application form when ready
-const COHORT_HREF = '/contact'
+const APPLICATION_HREF = '/apply/form'
 
 const fits = [
   {
     label: 'Apply for Private Coaching if...',
     cta: 'Apply for Private Coaching',
-    href: PRIVATE_COACHING_HREF,
+    href: APPLICATION_HREF,
     variant: 'primary' as const,
     items: [
       'you want direct access and personalized correction',
@@ -23,7 +19,7 @@ const fits = [
   {
     label: 'Apply for the Cohort if...',
     cta: 'Apply for the Next Cohort',
-    href: COHORT_HREF,
+    href: APPLICATION_HREF,
     variant: 'gold-outline' as const,
     items: [
       'you want real coaching, but not full private access',

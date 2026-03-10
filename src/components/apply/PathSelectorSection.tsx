@@ -1,25 +1,21 @@
 import PageContainer from '@/components/layout/PageContainer'
 import Button from '@/components/ui/Button'
 
-// TODO: Wire to Private Coaching application form when ready
-const PRIVATE_COACHING_HREF = '/contact'
-
-// TODO: Wire to Group Coaching Cohort application form when ready
-const COHORT_HREF = '/contact'
+const APPLICATION_HREF = '/apply/form'
 
 const paths = [
   {
     title: 'Private Coaching',
     body: 'For men who want direct access, personalized correction, and the highest level of support inside Forged By War.',
     cta: 'Apply for Private Coaching',
-    href: PRIVATE_COACHING_HREF,
+    href: APPLICATION_HREF,
     variant: 'primary' as const,
   },
   {
     title: 'Group Coaching Cohort',
     body: 'For men who want live coaching, a serious room, and a defined 12-week container built for movement and accountability.',
     cta: 'Apply for the Next Cohort',
-    href: COHORT_HREF,
+    href: APPLICATION_HREF,
     variant: 'gold-outline' as const,
   },
   {

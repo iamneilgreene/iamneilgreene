@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import ContactHeroSection from '@/components/contact/ContactHeroSection'
 import ContactPurposeSection from '@/components/contact/ContactPurposeSection'
 import InquiryPathsSection from '@/components/contact/InquiryPathsSection'
+import ContactFormSection from '@/components/contact/ContactFormSection'
 import InquiryGuidanceSection from '@/components/contact/InquiryGuidanceSection'
 import FinalContactCTASection from '@/components/contact/FinalContactCTASection'
 
@@ -17,6 +18,7 @@ export default function ContactPage() {
       <ContactHeroSection />
       <ContactPurposeSection />
       <InquiryPathsSection />
+      <ContactFormSection />
       <InquiryGuidanceSection />
       <FinalContactCTASection />
     </>

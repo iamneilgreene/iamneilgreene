@@ -38,7 +38,7 @@ export default function FinalTrustCTASection() {
             <Button href="/community" variant="gold-outline" size="lg">
               Join the Brotherhood
             </Button>
-            <Button href="/contact" variant="secondary" size="lg">
+            <Button href="/speaking#booking" variant="secondary" size="lg">
               Book Neil to Speak
             </Button>
             <Button href="/book" variant="ghost" size="lg">

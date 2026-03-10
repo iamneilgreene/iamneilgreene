@@ -1,7 +1,6 @@
 import PageContainer from '@/components/layout/PageContainer'
 import Button from '@/components/ui/Button'
 
-// TODO: Wire to contact/speaking inquiry form when ready
 const INQUIRY_HREF = '#inquiry-form'
 const SPEAKING_HREF = '#inquiry-form'
 

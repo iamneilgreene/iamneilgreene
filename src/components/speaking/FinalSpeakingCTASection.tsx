@@ -30,7 +30,7 @@ export default function FinalSpeakingCTASection() {
           </p>
 
           <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-center">
-            <Button href="/contact" variant="primary" size="lg">
+            <Button href="#booking" variant="primary" size="lg">
               Book Neil to Speak
             </Button>
             <Button href={ONE_SHEET_HREF} variant="gold-outline" size="lg">

@@ -30,7 +30,7 @@ const paths = [
     title: 'Speaking Engagements',
     body: 'For leaders, teams, and organizations that need a message on discipline, accountability, resilience, leadership, and execution under pressure.',
     cta: 'Book Neil to Speak',
-    href: '/contact',
+    href: '/speaking#booking',
     variant: 'secondary' as const,
     highlight: false,
   },

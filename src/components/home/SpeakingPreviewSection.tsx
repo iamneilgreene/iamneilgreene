@@ -30,7 +30,7 @@ export default function SpeakingPreviewSection() {
               higher standard of execution.
             </p>
 
-            <Button href="/contact" variant="gold-outline" size="md" className="self-start">
+            <Button href="/speaking#booking" variant="gold-outline" size="md" className="self-start">
               Book Neil to Speak
             </Button>
           </div>

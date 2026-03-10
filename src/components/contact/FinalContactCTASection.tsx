@@ -27,10 +27,10 @@ export default function FinalContactCTASection() {
           </p>
 
           <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-center">
-            <Button href="#inquiry" variant="primary" size="lg">
+            <Button href="#inquiry-form" variant="primary" size="lg">
               Send an Inquiry
             </Button>
-            <Button href="#inquiry" variant="gold-outline" size="lg">
+            <Button href="#inquiry-form" variant="gold-outline" size="lg">
               Book Neil to Speak
             </Button>
           </div>

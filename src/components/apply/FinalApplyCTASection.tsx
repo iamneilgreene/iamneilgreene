@@ -2,11 +2,7 @@ import PageContainer from '@/components/layout/PageContainer'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
 
-// TODO: Wire to Private Coaching application form when ready
-const PRIVATE_COACHING_HREF = '/contact'
-
-// TODO: Wire to Group Coaching Cohort application form when ready
-const COHORT_HREF = '/contact'
+const APPLICATION_HREF = '/apply/form'
 
 export default function FinalApplyCTASection() {
   return (
@@ -33,10 +29,10 @@ export default function FinalApplyCTASection() {
           </p>
 
           <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-center">
-            <Button href={PRIVATE_COACHING_HREF} variant="primary" size="lg">
+            <Button href={APPLICATION_HREF} variant="primary" size="lg">
               Apply for Private Coaching
             </Button>
-            <Button href={COHORT_HREF} variant="gold-outline" size="lg">
+            <Button href={APPLICATION_HREF} variant="gold-outline" size="lg">
               Apply for the Next Cohort
             </Button>
           </div>
