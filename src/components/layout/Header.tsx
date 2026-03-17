@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
-import { NAV_LINKS, CTA_PRIMARY, SITE_NAME, SITE_TAGLINE } from '@/lib/constants'
+import { NAV_LINKS, CTA_PRIMARY, SITE_NAME } from '@/lib/constants'
 import Button from '@/components/ui/Button'
 
 export default function Header() {
@@ -16,9 +17,14 @@ export default function Header() {
           <span className="font-display text-lg font-semibold tracking-wide text-[#f4f1ec]">
             {SITE_NAME}
           </span>
-          <span className="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-[#b8975a]">
-            {SITE_TAGLINE}
-          </span>
+          <Image
+            src="/images/FBW_logo.png"
+            alt="Forged By War"
+            width={150}
+            height={23}
+            className="h-3 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop Nav */}
