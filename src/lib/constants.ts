@@ -22,7 +22,7 @@ export const NAV_LINKS = [
   { label: 'Resources', href: '/resources' },
 ] as const
 
-export const CTA_PRIMARY = { label: 'Apply Now', href: '/apply' }
+export const CTA_PRIMARY = { label: 'Apply Now', href: '/apply/form' }
 export const CTA_SECONDARY = { label: 'Contact', href: '/contact' }
 
 /* ─── Social Links ────────────────────────────────────────────────────── */

@@ -27,7 +27,7 @@ export default function FinalGroupCTASection() {
           </p>
 
           <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-center">
-            <Button href="/apply" variant="gold-outline" size="lg">
+            <Button href="/apply/form" variant="gold-outline" size="lg">
               Apply for the Next Cohort
             </Button>
             <Button href="/community" variant="secondary" size="lg">

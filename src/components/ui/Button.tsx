@@ -45,7 +45,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 }
 
 const baseStyles =
-  'inline-flex items-center justify-center gap-2 rounded-none tracking-wide transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#b8975a] focus-visible:outline-offset-2'
+  'inline-flex items-center justify-center gap-2 rounded-full tracking-wide transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#b8975a] focus-visible:outline-offset-2'
 
 export default function Button({
   variant = 'primary',

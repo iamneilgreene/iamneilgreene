@@ -2,12 +2,24 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { NAV_LINKS, CTA_PRIMARY, SITE_NAME } from '@/lib/constants'
 import Button from '@/components/ui/Button'
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#2e2e2e] bg-[#0d0d0d]/95 backdrop-blur-sm">
@@ -28,16 +40,66 @@ export default function Header() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium tracking-wide text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-8 md:flex" ref={dropdownRef}>
+          {NAV_LINKS.map((link) => {
+            const hasChildren = 'children' in link && link.children.length > 0
+            const isOpen = openDropdown === link.href
+
+            if (hasChildren) {
+              return (
+                <div key={link.href} className="relative">
+                  <button
+                    onClick={() => setOpenDropdown(isOpen ? null : link.href)}
+                    className="flex items-center gap-1 text-sm font-medium tracking-wide text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
+                  >
+                    {link.label}
+                    <svg
+                      className={`h-3 w-3 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {isOpen && (
+                    <div className="absolute left-0 top-full mt-2 min-w-[180px] border border-[#2e2e2e] bg-[#141414] py-1 shadow-lg">
+                      <Link
+                        href={link.href}
+                        onClick={() => setOpenDropdown(null)}
+                        className="block px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#6a6560] transition-colors hover:text-[#9a9590]"
+                      >
+                        All Coaching
+                      </Link>
+                      <div className="mx-4 mb-1 h-px bg-[#2e2e2e]" />
+                      {link.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={() => setOpenDropdown(null)}
+                          className="block px-4 py-2.5 text-sm font-medium text-[#9a9590] transition-colors hover:bg-[#1e1e1e] hover:text-[#f4f1ec]"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            }
+
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm font-medium tracking-wide text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
+              >
+                {link.label}
+              </Link>
+            )
+          })}
         </nav>
 
         {/* CTA */}
@@ -69,16 +131,46 @@ export default function Header() {
       {mobileOpen && (
         <div className="border-t border-[#2e2e2e] bg-[#141414] px-6 py-6 md:hidden">
           <nav className="flex flex-col gap-4">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-base font-medium text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const hasChildren = 'children' in link && link.children.length > 0
+
+              if (hasChildren) {
+                return (
+                  <div key={link.href} className="flex flex-col gap-1">
+                    <Link
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="text-base font-medium text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
+                    >
+                      {link.label}
+                    </Link>
+                    <div className="ml-3 flex flex-col gap-1 border-l border-[#2e2e2e] pl-3">
+                      {link.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={() => setMobileOpen(false)}
+                          className="text-sm font-medium text-[#6a6560] transition-colors hover:text-[#9a9590]"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )
+              }
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="text-base font-medium text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
             <div className="mt-4 border-t border-[#2e2e2e] pt-4">
               <Button href={CTA_PRIMARY.href} variant="primary" size="sm" className="w-full">
                 {CTA_PRIMARY.label}

@@ -26,7 +26,7 @@ export default function FinalPrivateCTASection() {
           </p>
 
           <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-center">
-            <Button href="/apply" variant="primary" size="lg">
+            <Button href="/apply/form" variant="primary" size="lg">
               Apply for Private Coaching
             </Button>
             <Button href="/community" variant="secondary" size="lg">
