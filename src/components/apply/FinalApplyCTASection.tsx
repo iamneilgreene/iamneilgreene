@@ -39,7 +39,7 @@ export default function FinalApplyCTASection() {
 
           <Link
             href="/community"
-            className="text-sm text-[#9a9590] underline underline-offset-4 hover:text-[#b8975a] transition-colors duration-200"
+            className="text-center text-sm text-[#9a9590] underline underline-offset-4 hover:text-[#b8975a] transition-colors duration-200"
           >
             Join the Brotherhood
           </Link>

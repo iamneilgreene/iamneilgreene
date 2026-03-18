@@ -22,17 +22,17 @@ export default function HeroSection() {
           src="/images/hero-subject.png"
           alt=""
           fill
-          className="object-cover object-[right_top] opacity-80 md:opacity-90"
+          className="object-cover object-[10%_top] md:object-[right_top] opacity-80 md:opacity-90"
           priority
           sizes="(min-width: 768px) 55vw, 100vw"
         />
         {/* Gradient overlays to blend into dark background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0d0d] via-[#0d0d0d]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0d0d] via-[#0d0d0d]/60 md:via-[#0d0d0d]/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0d0d0d]/60" />
       </div>
 
       <PageContainer className="relative z-10">
-        <div className="flex max-w-2xl flex-col gap-9 py-28 pb-36 md:py-36 md:pb-44">
+        <div className="flex max-w-2xl flex-col gap-6 pt-10 pb-80 md:gap-9 md:py-36 md:pb-44">
 
           {/* Eyebrow */}
           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-[#b8975a]">
@@ -57,7 +57,7 @@ export default function HeroSection() {
 
           {/* CTA row */}
           <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center">
-            <Button href="/apply" variant="primary" size="lg">
+            <Button href="/apply/form" variant="primary" size="lg">
               Apply for Coaching
             </Button>
             <Button href="/community" variant="gold-outline" size="lg">
@@ -65,7 +65,7 @@ export default function HeroSection() {
             </Button>
             <Link
               href="/speaking"
-              className="text-sm font-medium tracking-wide text-[#9a9590] underline-offset-4 transition-colors hover:text-[#f4f1ec] hover:underline sm:ml-2"
+              className="text-center text-sm font-medium tracking-wide text-[#9a9590] underline-offset-4 transition-colors hover:text-[#f4f1ec] hover:underline sm:text-left sm:ml-2"
             >
               Book Neil to Speak
             </Link>

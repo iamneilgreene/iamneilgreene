@@ -61,7 +61,7 @@ export default function BrotherhoodSection() {
               ))}
             </ul>
 
-            <Button href="/community" variant="primary" size="md" className="mt-2 self-start">
+            <Button href="/community" variant="primary" size="md" className="mt-2">
               Join the Brotherhood
             </Button>
           </div>

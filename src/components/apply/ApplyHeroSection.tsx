@@ -36,7 +36,7 @@ export default function ApplyHeroSection() {
                 Apply for the Next Cohort
               </Button>
             </div>
-            <div className="pt-1">
+            <div className="pt-1 text-center sm:text-left">
               <Link
                 href="/community"
                 className="text-sm text-[#9a9590] underline underline-offset-4 hover:text-[#b8975a] transition-colors duration-200"
