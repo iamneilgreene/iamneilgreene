@@ -1,87 +1,90 @@
 import Link from 'next/link'
-import { SITE_NAME, SITE_TAGLINE, FOOTER_LINKS, SOCIAL_LINKS } from '@/lib/constants'
+import Container from './Container'
+import NGMark from '@/components/brand/NGMark'
+import {
+  FOOTER_NAV,
+  SOCIAL_LINKS,
+  HANDLE,
+  PHILOSOPHY,
+  MOVEMENT,
+  SITE_NAME,
+} from '@/lib/constants'
 
 export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-[#2e2e2e] bg-[#141414]">
-      <div className="mx-auto max-w-7xl px-6 py-16 md:px-10 lg:px-16">
-        <div className="grid gap-12 md:grid-cols-3">
-          {/* Brand */}
-          <div className="flex flex-col gap-4 text-center md:text-left">
-            <div>
-              <p className="font-display text-xl font-semibold text-[#f4f1ec]">{SITE_NAME}</p>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#b8975a]">
-                {SITE_TAGLINE}
+    <footer className="border-t border-hairline bg-ink-950">
+      <Container>
+        <div className="grid gap-12 py-16 md:grid-cols-[1.4fr_2fr] md:py-20">
+          {/* Identity + the closing statement of the philosophy */}
+          <div>
+            <div className="flex items-center gap-3">
+              <NGMark size={34} className="text-bone-50" title="" />
+              <p className="font-display text-xl tracking-[-0.01em] text-text-primary">
+                Neil Greene
               </p>
             </div>
-            <p className="max-w-xs text-sm leading-relaxed text-[#9a9590] mx-auto md:mx-0">
-              Helping high-performers build the life they fought for.
+            <p className="mt-5 max-w-xs font-display text-[1.0625rem] leading-snug text-bone-300">
+              {PHILOSOPHY}
             </p>
-          </div>
+            <p className="label label-bronze mt-3">{MOVEMENT}</p>
 
-          {/* Nav Links */}
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-[#b8975a]">
-              Navigate
-            </p>
-            <ul className="flex flex-col gap-2">
-              {FOOTER_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social */}
-          <div>
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-[#b8975a]">
-              Connect
-            </p>
-            <ul className="flex flex-col gap-2">
-              {SOCIAL_LINKS.map((link) => (
-                <li key={link.label}>
+            <ul className="mt-8 flex flex-wrap gap-x-5 gap-y-2">
+              {SOCIAL_LINKS.map((s) => (
+                <li key={s.label}>
                   <a
-                    href={link.href}
+                    href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-[#9a9590] transition-colors hover:text-[#f4f1ec]"
+                    className="text-[0.8125rem] text-text-muted transition-colors hover:text-text-primary"
                   >
-                    {link.label}
-                    <span className="ml-2 text-[#2e2e2e]">—</span>
-                    <span className="ml-2 text-[#b8975a]">{link.handle}</span>
+                    {s.label}
                   </a>
                 </li>
               ))}
             </ul>
+            <p className="mt-3 font-mono text-[0.6875rem] text-slate-600">{HANDLE}</p>
           </div>
+
+          <nav
+            className="grid grid-cols-2 gap-8 sm:grid-cols-3"
+            aria-label="Footer"
+          >
+            {FOOTER_NAV.map((group) => (
+              <div key={group.heading}>
+                <h2 className="label">{group.heading}</h2>
+                <ul className="mt-4 flex flex-col gap-2.5">
+                  {group.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-[0.8125rem] text-text-muted transition-colors hover:text-text-primary"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 flex flex-col gap-2 border-t border-[#2e2e2e] pt-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
-          <p className="text-xs text-[#9a9590]">
-            &copy; {year} {SITE_NAME}. All rights reserved.
+        <div className="flex flex-col gap-3 border-t border-hairline py-7 text-[0.75rem] text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {year} {SITE_NAME}. All rights reserved.
           </p>
-          <p className="text-xs text-[#6a6560]">
-            Site design by{' '}
-            <a
-              href="https://nightfortress.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-[#9a9590]"
-            >
-              Nightfortress
-            </a>
-          </p>
+          <div className="flex gap-5">
+            <Link href="/privacy" className="transition-colors hover:text-text-muted">
+              Privacy
+            </Link>
+            <Link href="/contact" className="transition-colors hover:text-text-muted">
+              Contact
+            </Link>
+          </div>
         </div>
-      </div>
+      </Container>
     </footer>
   )
 }

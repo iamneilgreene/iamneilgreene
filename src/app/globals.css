@@ -1,90 +1,242 @@
 @import "tailwindcss";
 
-/* ─── Brand Design Tokens ────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   NEIL GREENE — MODERN COMMAND
+   Visual territory: Modern Command / Calm Power.
+   Deep ink over pure black. Warm bone over clinical white. Bronze is a
+   detail, never a flex. Cobalt is the only "digital" voice in the system.
+   ═══════════════════════════════════════════════════════════════════════ */
+
 @theme inline {
-  /* Colour palette */
-  --color-brand-black:   #0d0d0d;
-  --color-brand-dark:    #141414;
-  --color-brand-charcoal:#1e1e1e;
-  --color-brand-muted:   #2a2a2a;
-  --color-brand-border:  #2e2e2e;
-  --color-brand-text:    #e8e4de;
-  --color-brand-subtle:  #9a9590;
-  --color-brand-gold:    #b8975a;
-  --color-brand-gold-light: #d4af72;
-  --color-brand-gold-dark:  #9a7d45;
-  --color-brand-white:   #f4f1ec;
+  /* Authored in OKLCH. Every neutral is tinted toward a brand hue: ink toward
+     255 degrees, bone toward 85. No pure black, no pure white, anywhere. */
 
-  /* Light background family (warm stone) */
-  --color-brand-stone:        #eae5dc;
-  --color-brand-stone-dark:   #ddd7cc;
+  /* ── Ink: the authoritative ground. Navy-leaning, never pure black ── */
+  --color-ink-950: oklch(0.140 0.015 255);
+  --color-ink-900: oklch(0.172 0.018 255);
+  --color-ink-850: oklch(0.202 0.021 255);
+  --color-ink-800: oklch(0.240 0.024 255);
+  --color-ink-700: oklch(0.282 0.027 254);
+  --color-ink-600: oklch(0.332 0.031 254);
+  --color-ink-500: oklch(0.402 0.037 254);
 
-  /* Improved dark card surface */
-  --color-brand-surface:      #181818;
+  /* ── Bone: warm parchment ground for editorial passages ── */
+  --color-bone-50:  oklch(0.978 0.006 85);
+  --color-bone-100: oklch(0.951 0.011 85);
+  --color-bone-200: oklch(0.908 0.017 85);
+  --color-bone-300: oklch(0.848 0.022 85);
+  --color-bone-400: oklch(0.758 0.026 85);
 
-  /* Text colors for light backgrounds */
-  --color-brand-ink:          #1a1a1a;
-  --color-brand-ink-body:     #3d3530;
-  --color-brand-ink-subtle:   #6b6158;
+  /* ── Graphite / slate: structure, secondary voice ── */
+  --color-slate-400: oklch(0.775 0.028 252);
+  --color-slate-500: oklch(0.672 0.031 252);
+  --color-slate-600: oklch(0.588 0.030 252);
 
-  /* Borders on light backgrounds */
-  --color-brand-border-light: #cfc8bb;
+  /* ── Bronze: prestige detail. Muted brass, never bright gold ── */
+  --color-bronze-400: oklch(0.740 0.070 75);
+  --color-bronze-500: oklch(0.612 0.078 68);
+  --color-bronze-600: oklch(0.512 0.068 68);
 
-  /* Typography */
-  --font-display: var(--font-playfair);
-  --font-sans:    var(--font-inter);
+  /* ── Cobalt: interaction, data, technology. Restrained ── */
+  --color-cobalt-300: oklch(0.752 0.110 265);
+  --color-cobalt-400: oklch(0.672 0.145 264);
+  --color-cobalt-500: oklch(0.555 0.185 263);
+  --color-cobalt-600: oklch(0.462 0.175 263);
 
-  /* Spacing scale overrides */
-  --spacing-section: 6rem;
-  --spacing-section-sm: 4rem;
+  /* ── Semantic surface + text ── */
+  --color-surface:        oklch(0.172 0.018 255);
+  --color-surface-raised: oklch(0.240 0.024 255);
+  --color-surface-sunken: oklch(0.140 0.015 255);
+  --color-hairline:       oklch(0.332 0.031 254);
+  --color-hairline-bright:oklch(0.402 0.037 254);
+  /* Visible boundary of interactive controls. Meets WCAG 1.4.11 (3:1).
+     The decorative hairlines above do not and must never be used here. */
+  --color-border-input:   oklch(0.490 0.037 254);
+
+  --color-text-primary:   oklch(0.951 0.011 85);
+  --color-text-body:      oklch(0.845 0.017 252);
+  --color-text-muted:     oklch(0.598 0.032 252);
+
+  /* On bone grounds */
+  --color-ink-on-bone:       oklch(0.202 0.021 255);
+  --color-ink-on-bone-body:  oklch(0.360 0.021 253);
+  --color-ink-on-bone-muted: oklch(0.540 0.018 253);
+  --color-hairline-on-bone:  oklch(0.848 0.022 85);
+
+  /* ── Type ── */
+  --font-display: var(--font-display-face);
+  --font-sans:    var(--font-geist);
+  --font-mono:    var(--font-geist-mono);
 }
 
-/* ─── Base Styles ─────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════
+   Base
+   ═══════════════════════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   scroll-behavior: smooth;
+  /* Prevents layout shift when a scrollbar appears/disappears between routes */
+  scrollbar-gutter: stable;
+  background-color: var(--color-ink-900);
 }
 
 body {
-  background-color: var(--color-brand-black);
-  color: var(--color-brand-text);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  background-color: var(--color-ink-900);
+  color: var(--color-text-body);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* ─── Selection ───────────────────────────────────────────────────────── */
+/* Literata carries an `opsz` axis. `auto` lets the browser derive the optical
+   size from the rendered font-size, so a 7rem headline gets the fine hairlines
+   and tight fit it needs while a 1rem label stays sturdy. A hardcoded axis
+   value gives every size the same cut, which is what made headlines read thin.
+   Components that animate `font-variation-settings` override this on purpose. */
+.font-display {
+  font-optical-sizing: auto;
+  letter-spacing: -0.021em;
+  /* Light type on an ink ground reads a weight lighter than it is. */
+  text-rendering: optimizeLegibility;
+}
+
+/* Display statements are the argument, so they get the weight. Tracking
+   tightens as size grows: the same -0.02em that fits a 2rem heading opens up
+   and looks slack at 7rem. */
+.font-display:is(h1, h2) {
+  letter-spacing: -0.032em;
+}
+
+/* ── Grain ─────────────────────────────────────────────────────────────
+   A fixed film-grain layer over the whole page. Large flat fields of ink
+   read as unfinished on quality displays; a few percent of monochrome
+   noise gives the ground the tooth of printed stock. It is texture, not
+   decoration: no gradient, no colour, no motion. */
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ── Selection / focus / scrollbar ─────────────────────────────────── */
+
 ::selection {
-  background-color: var(--color-brand-gold);
-  color: var(--color-brand-black);
+  background-color: var(--color-cobalt-500);
+  color: var(--color-bone-50);
 }
 
-/* ─── Scrollbar ───────────────────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-brand-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-brand-border);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand-gold);
-}
-
-/* ─── Focus ───────────────────────────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-brand-gold);
-  outline-offset: 2px;
+  outline: 2px solid var(--color-cobalt-400);
+  outline-offset: 3px;
+  border-radius: 1px;
 }
 
-/* ─── Utility: Gold accent line ───────────────────────────────────────── */
-.accent-line {
-  display: block;
-  width: 3rem;
-  height: 2px;
-  background-color: var(--color-brand-gold);
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-ink-950); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-600);
+  border: 2px solid var(--color-ink-950);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-ink-500); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   System language — the small technical marks that carry "Modern Command"
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Section eyebrow: mono, tracked, quiet. Linear's data-label voice. */
+.label {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-slate-500);
+}
+
+.label-bronze { color: var(--color-bronze-500); }
+.label-cobalt { color: var(--color-cobalt-400); }
+
+/* Hairline rules that read as drafting marks rather than dividers */
+.rule      { height: 1px; background: var(--color-hairline); }
+.rule-bone { height: 1px; background: var(--color-hairline-on-bone); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Motion — every reveal here is opt-out under prefers-reduced-motion
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@keyframes rise {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Applied by the Reveal component once the element enters the viewport.
+
+   Guarded on `.js`, which an inline script in <head> sets before first paint.
+   Without JavaScript the class never lands, so revealed content is simply
+   visible — the page must never depend on an observer to show its own text. */
+.js .reveal {
+  opacity: 0;
+}
+
+.reveal[data-shown="true"] {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.reveal-fade[data-shown="true"] {
+  animation: fade 0.9s ease forwards;
+}
+
+/* Section 0 of the blueprint: a restrained sub-1.5s entry, not a loader.
+   The hero staggers in once, on load; everything is visible without JS. */
+.js .enter {
+  opacity: 0;
+  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.js .enter-fade {
+  opacity: 0;
+  animation: fade 1.4s ease forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Reduced motion — Rule 5 of the blueprint's 3D/motion rules.
+   Non-essential movement disappears; content must still be fully visible.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js .reveal,
+  .js .enter,
+  .js .enter-fade { opacity: 1 !important; transform: none !important; }
 }

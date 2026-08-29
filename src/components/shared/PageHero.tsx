@@ -1,47 +1,33 @@
-import PageContainer from '@/components/layout/PageContainer'
-import { H1, Label, BodyLarge } from '@/components/ui/Typography'
-import { cn } from '@/lib/utils'
-
-interface PageHeroProps {
-  label?: string
-  title: string
-  subtitle?: string
-  /** Centres content — used on most interior pages */
-  align?: 'left' | 'center'
-  className?: string
-}
+import Container from '@/components/layout/Container'
 
 export default function PageHero({
-  label,
+  eyebrow,
   title,
-  subtitle,
-  align = 'left',
-  className,
-}: PageHeroProps) {
+  lead,
+  children,
+}: {
+  eyebrow: string
+  title: React.ReactNode
+  lead?: string
+  children?: React.ReactNode
+}) {
   return (
-    <section
-      className={cn(
-        'relative border-b border-[#2e2e2e] bg-[#141414] pt-32 pb-16 md:pt-40 md:pb-20',
-        className
-      )}
-    >
-      {/* Subtle top accent line */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#b8975a]/40 to-transparent" />
-
-      <PageContainer>
-        <div className={cn('flex flex-col gap-5', align === 'center' && 'items-center text-center')}>
-          {label && <Label>{label}</Label>}
-
-          <H1 className={cn(align === 'center' && 'max-w-3xl')}>{title}</H1>
-
-          {subtitle && (
-            <BodyLarge className={cn('max-w-2xl text-[#9a9590]')}>{subtitle}</BodyLarge>
-          )}
-
-          {/* Decorative accent line */}
-          <span className="mt-2 block h-px w-12 bg-[#b8975a]" />
-        </div>
-      </PageContainer>
+    <section className="relative overflow-hidden bg-ink-900 pt-32 pb-16 md:pt-40 md:pb-24">
+      <div
+        className="pointer-events-none absolute -right-40 -top-40 h-[34rem] w-[34rem] rounded-full opacity-[0.09] blur-3xl"
+        style={{ background: 'radial-gradient(circle, #3d6fe5 0%, transparent 70%)' }}
+        aria-hidden="true"
+      />
+      <Container className="relative">
+        <p className="label label-bronze">{eyebrow}</p>
+        <h1 className="mt-7 max-w-3xl font-display text-[2.5rem] font-bold leading-[1.05] tracking-[-0.03em] text-bone-50 md:text-6xl">
+          {title}
+        </h1>
+        {lead && (
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-text-body">{lead}</p>
+        )}
+        {children}
+      </Container>
     </section>
   )
 }

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#0b0f17"/>
+  <g transform="translate(6.4 9.3) scale(0.0914)">
+    <defs>
+      <mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="560" height="440">
+        <rect width="560" height="440" fill="#fff"/>
+        <path d="M50 30 H135 L360 267 V362 L106 94 Z" fill="#000" stroke="#000" stroke-width="30"/>
+        <rect y="352" width="560" height="88" fill="#fff"/>
+      </mask>
+    </defs>
+    <path d="M513.8 276.7 A163 163 0 1 1 466.2 120.8" fill="none" stroke="#f7f4ee" stroke-width="60" mask="url(#m)"/>
+    <rect x="390" y="249" width="151" height="60" fill="#f7f4ee"/>
+    <path d="M50 30 H135 L304 208 V115 H360 V362 L106 94 V410 H50 Z" fill="#f7f4ee"/>
+  </g>
+</svg>

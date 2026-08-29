@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'gold-outline'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'bronze' | 'on-bone'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonBaseProps {
@@ -16,6 +16,7 @@ interface ButtonAsButton extends ButtonBaseProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>
   type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
+  'aria-label'?: string
 }
 
 interface ButtonAsLink extends ButtonBaseProps {
@@ -23,29 +24,37 @@ interface ButtonAsLink extends ButtonBaseProps {
   onClick?: undefined
   type?: undefined
   disabled?: undefined
+  'aria-label'?: string
 }
 
 type ButtonProps = ButtonAsButton | ButtonAsLink
 
+/**
+ * Square corners are deliberate. Cobalt carries every primary action —
+ * it is the system's single "interactive" signal. Bronze is reserved for
+ * prestige moments and never competes with a primary CTA on the same screen.
+ */
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#b8975a] text-[#0d0d0d] font-semibold hover:bg-[#d4af72] active:bg-[#9a7d45]',
+    'bg-cobalt-500 text-bone-50 font-medium hover:bg-cobalt-400 active:bg-cobalt-600 shadow-[0_1px_0_0_rgba(255,255,255,0.14)_inset]',
   secondary:
-    'bg-[#1e1e1e] text-[#e8e4de] border border-[#2e2e2e] hover:border-[#b8975a] hover:text-[#b8975a]',
+    'bg-transparent text-text-primary border border-hairline-bright hover:border-slate-500 hover:bg-ink-800',
   ghost:
-    'bg-transparent text-[#9a9590] hover:text-[#e8e4de] hover:bg-[#1e1e1e]',
-  'gold-outline':
-    'bg-transparent border border-[#b8975a] text-[#b8975a] hover:bg-[#b8975a] hover:text-[#0d0d0d]',
+    'bg-transparent text-text-muted hover:text-text-primary',
+  bronze:
+    'bg-transparent border border-bronze-500 text-bronze-400 hover:bg-bronze-500 hover:text-ink-900 hover:border-bronze-500',
+  'on-bone':
+    'bg-ink-900 text-bone-50 font-medium hover:bg-ink-800',
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-5 py-2.5 text-sm',
-  md: 'px-7 py-3.5 text-sm',
-  lg: 'px-10 py-4 text-base',
+  sm: 'px-4 py-2 text-[0.8125rem]',
+  md: 'px-6 py-3 text-sm',
+  lg: 'px-7 py-3.5 text-[0.9375rem]',
 }
 
 const baseStyles =
-  'inline-flex items-center justify-center gap-2 rounded-full tracking-wide transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#b8975a] focus-visible:outline-offset-2 self-center sm:self-auto'
+  'inline-flex items-center justify-center gap-2 tracking-[-0.01em] transition-colors duration-200 whitespace-nowrap disabled:opacity-40 disabled:pointer-events-none'
 
 export default function Button({
   variant = 'primary',
@@ -59,7 +68,7 @@ export default function Button({
 
   if (href !== undefined) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} aria-label={rest['aria-label']}>
         {children}
       </Link>
     )

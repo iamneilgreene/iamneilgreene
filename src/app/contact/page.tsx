@@ -1,26 +1,29 @@
 import type { Metadata } from 'next'
-import ContactHeroSection from '@/components/contact/ContactHeroSection'
-import ContactPurposeSection from '@/components/contact/ContactPurposeSection'
-import InquiryPathsSection from '@/components/contact/InquiryPathsSection'
-import ContactFormSection from '@/components/contact/ContactFormSection'
-import InquiryGuidanceSection from '@/components/contact/InquiryGuidanceSection'
-import FinalContactCTASection from '@/components/contact/FinalContactCTASection'
+import { Suspense } from 'react'
+import Section from '@/components/layout/Section'
+import PageHero from '@/components/shared/PageHero'
+import ContactForm from '@/components/contact/ContactForm'
 
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'For speaking, partnerships, media, or general inquiries, reach out clearly. Coaching inquiries start on the Apply page.',
+    'Speaking inquiries, organizational advisory, community interest, and general questions.',
 }
 
 export default function ContactPage() {
   return (
     <>
-      <ContactHeroSection />
-      <ContactPurposeSection />
-      <InquiryPathsSection />
-      <ContactFormSection />
-      <InquiryGuidanceSection />
-      <FinalContactCTASection />
+      <PageHero
+        eyebrow="Contact"
+        title="Tell me what you are carrying."
+        lead="Choose a reason so the message reaches the right place. Specific messages get better answers than general ones."
+      />
+
+      <Section ground="ink-sunken" topRule width="narrow">
+        <Suspense fallback={null}>
+          <ContactForm />
+        </Suspense>
+      </Section>
     </>
   )
 }
