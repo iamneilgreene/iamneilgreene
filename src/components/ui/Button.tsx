@@ -36,9 +36,9 @@ type ButtonProps = ButtonAsButton | ButtonAsLink
  */
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-cobalt-500 text-bone-50 font-medium hover:bg-cobalt-400 active:bg-cobalt-600 shadow-[0_1px_0_0_rgba(255,255,255,0.14)_inset]',
+    'bg-cobalt-500 text-bone-50 font-medium hover:bg-cobalt-600 active:bg-cobalt-600 shadow-[0_1px_0_0_rgba(255,255,255,0.14)_inset]',
   secondary:
-    'bg-transparent text-text-primary border border-hairline-bright hover:border-slate-500 hover:bg-ink-800',
+    'bg-transparent text-text-primary border border-border-input hover:border-slate-500 hover:bg-ink-800',
   ghost:
     'bg-transparent text-text-muted hover:text-text-primary',
   bronze:
@@ -48,7 +48,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-4 py-2 text-[0.8125rem]',
+  sm: 'min-h-11 px-4 py-2 text-[0.8125rem]',
   md: 'px-6 py-3 text-sm',
   lg: 'px-7 py-3.5 text-[0.9375rem]',
 }

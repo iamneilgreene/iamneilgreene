@@ -210,7 +210,7 @@ function StackedChapter() {
         <div className="py-20 md:py-24">
           <h2 className="font-display leading-[1.06] tracking-[-0.03em] text-bone-50">
             <span className="block text-2xl font-medium text-text-muted sm:text-3xl">When</span>
-            <span className="block text-[2.5rem] font-extrabold uppercase leading-[0.92] tracking-[-0.04em] sm:text-6xl">
+            <span className="block text-[clamp(1.75rem,8.5vw,2.5rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.04em] sm:text-6xl">
               Responsibility
             </span>
             <span className="block text-2xl font-medium text-text-muted sm:text-3xl">

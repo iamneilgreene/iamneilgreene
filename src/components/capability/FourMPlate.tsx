@@ -86,7 +86,7 @@ export default function FourMPlate({
               <div>
                 <p
                   className={cn(
-                    'font-display text-xl font-bold uppercase tracking-[-0.01em] transition-colors duration-500 md:text-2xl',
+                    'font-display text-lg font-bold uppercase sm:text-xl tracking-[-0.01em] transition-colors duration-500 md:text-2xl',
                     lit ? 'text-bone-50' : 'text-slate-600'
                   )}
                 >

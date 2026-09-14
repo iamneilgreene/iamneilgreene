@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Container from './Container'
@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils'
 
 export default function Header() {
   const pathname = usePathname()
+  const menuRef = useRef<HTMLDivElement>(null)
+  const toggleRef = useRef<HTMLButtonElement>(null)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [openGroup, setOpenGroup] = useState<string | null>(null)
@@ -42,13 +44,33 @@ export default function Header() {
     if (!menuOpen) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    const previousFocus = document.activeElement as HTMLElement | null
+    const links = () => Array.from(menuRef.current?.querySelectorAll<HTMLElement>('a[href], button') ?? [])
+    links()[0]?.focus()
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setMenuOpen(false)
+      if (e.key === 'Tab') {
+        const controls = [toggleRef.current, ...links()].filter((el): el is HTMLElement => el !== null)
+        const index = controls.indexOf(document.activeElement as HTMLElement)
+        if (e.shiftKey && index <= 0) {
+          e.preventDefault()
+          controls.at(-1)?.focus()
+        } else if (!e.shiftKey && (index === controls.length - 1 || index === -1)) {
+          e.preventDefault()
+          controls[0]?.focus()
+        }
+      }
     }
+    const onResize = () => {
+      if (window.matchMedia('(min-width: 1024px)').matches) setMenuOpen(false)
+    }
+    window.addEventListener('resize', onResize)
     window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = prev
       window.removeEventListener('keydown', onKey)
+      window.removeEventListener('resize', onResize)
+      previousFocus?.focus()
     }
   }, [menuOpen])
 
@@ -79,7 +101,7 @@ export default function Header() {
                 Neil Greene
               </span>
               <span
-                className="hidden font-mono text-[0.625rem] uppercase tracking-[0.18em] text-slate-600 transition-colors group-hover:text-bronze-500 sm:inline"
+                className="hidden font-mono text-[0.625rem] uppercase tracking-[0.18em] text-slate-600 transition-colors group-hover:text-bronze-400 xl:inline"
                 aria-hidden="true"
               >
                 Capability
@@ -93,23 +115,40 @@ export default function Header() {
                 return (
                   <div
                     key={link.href}
-                    className="relative"
+                    className="relative flex items-center"
+                    onBlur={(event) => {
+                      if (!event.currentTarget.contains(event.relatedTarget)) setOpenGroup(null)
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Escape') {
+                        setOpenGroup(null)
+                        event.currentTarget.querySelector('button')?.focus()
+                      }
+                    }}
                     onMouseEnter={() => children && setOpenGroup(link.href)}
                     onMouseLeave={() => children && setOpenGroup(null)}
                   >
                     <Link
                       href={link.href}
                       className={cn(
-                        'inline-flex items-center gap-1.5 px-3 py-2 text-[0.8125rem] transition-colors',
+                        'inline-flex items-center gap-1.5 min-h-11 px-2 py-2 text-[0.8125rem] transition-colors',
                         isActive(link.href)
                           ? 'text-text-primary'
                           : 'text-text-muted hover:text-text-primary'
                       )}
-                      aria-haspopup={children ? 'true' : undefined}
-                      aria-expanded={children ? openGroup === link.href : undefined}
+                      aria-current={isActive(link.href) ? 'page' : undefined}
                     >
                       {link.label}
-                      {children && (
+                    </Link>
+                    {children && (
+                      <button
+                        type="button"
+                        aria-label={`Show ${link.label} options`}
+                        aria-expanded={openGroup === link.href}
+                        aria-controls="work-submenu"
+                        onClick={() => setOpenGroup(openGroup === link.href ? null : link.href)}
+                        className="inline-flex h-11 w-6 items-center justify-center text-text-muted hover:text-text-primary"
+                      >
                         <svg
                           width="9"
                           height="6"
@@ -128,11 +167,11 @@ export default function Header() {
                             strokeLinecap="square"
                           />
                         </svg>
-                      )}
-                    </Link>
+                      </button>
+                    )}
 
                     {children && openGroup === link.href && (
-                      <div className="absolute left-0 top-full min-w-[15rem] border border-hairline bg-ink-850 py-1.5 shadow-2xl shadow-black/50">
+                      <div id="work-submenu" className="absolute left-0 top-full min-w-[15rem] border border-hairline bg-ink-850 py-1.5 shadow-2xl shadow-black/50">
                         {children.map((child) => (
                           <Link
                             key={child.href}
@@ -161,9 +200,10 @@ export default function Header() {
               </Button>
 
               <button
+                ref={toggleRef}
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
-                className="-mr-2 inline-flex h-10 w-10 items-center justify-center text-text-primary lg:hidden"
+                className="-mr-2 inline-flex h-11 w-11 items-center justify-center text-text-primary lg:hidden"
                 aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
@@ -191,6 +231,7 @@ export default function Header() {
       {/* Full-screen mobile menu — same hierarchy, no novelty interactions. */}
       {menuOpen && (
         <div
+          ref={menuRef}
           id="mobile-menu"
           className="fixed inset-0 z-40 overflow-y-auto bg-ink-900 pt-16 lg:hidden"
         >
