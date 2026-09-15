@@ -50,9 +50,9 @@ export default function Hero() {
 
           <div className="enter mt-7 max-w-[34rem] lg:mt-8" style={{ animationDelay: '0.28s' }}>
             <p className="text-base leading-relaxed text-text-body md:text-lg">
-              Ideas, systems, and experiences for builders, leaders, and people
-              carrying meaningful responsibility who want to expand what they
-              can understand, access, handle, and lead.
+              For builders, leaders, and people carrying meaningful responsibility.
+              See your strongest dimension, your current constraint, and where
+              responsibility may be outpacing your capability.
             </p>
           </div>
 
@@ -67,6 +67,9 @@ export default function Hero() {
               </svg>
             </Link>
           </div>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-text-muted">
+            About 5 minutes. See your initial results without email.
+          </p>
         </div>
 
         {/* Mobile: the portrait gets its own full-width block below the copy */}

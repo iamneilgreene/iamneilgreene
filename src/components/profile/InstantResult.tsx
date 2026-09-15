@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Container from '@/components/layout/Container'
 import Button from '@/components/ui/Button'
 import ScoreBars from './ScoreBars'
 import ShareCard from './ShareCard'
+import ProfileSubscription from './ProfileSubscription'
 import { DIMENSIONS, MOVEMENT, type MKey } from '@/lib/constants'
 import {
   bandFor,
+  retestCalendar,
   BANDS,
   GAP_LABELS,
   GAP_DESCRIPTIONS,
@@ -25,43 +27,59 @@ import { cn } from '@/lib/utils'
 
 const nameOf = (key: MKey) => DIMENSIONS.find((d) => d.key === key)!.name
 
-/** One personalised sentence, derived from the priority and gap status. */
+/** Interpret reported patterns without claiming predictive validity. */
 function immediateInsight(result: CapabilityResult): string {
-  const priority = nameOf(result.developmentPriority)
-  const gap = result.gaps?.[result.developmentPriority]
-
-  if (gap === 'critical' || gap === 'active') {
-    return `Your responsibilities are asking more of your ${priority} than your current profile reliably supports. Strengthening it should create the greatest immediate return.`
+  if (result.priorityCandidates.length > 1) {
+    return `Your responses do not establish one clear priority among ${result.priorityCandidates.map(nameOf).join(', ')}. Choose a starting point using a specific responsibility you face this month.`
   }
-  if (result.scores[result.developmentPriority] < 4.0) {
-    return `${priority} is the dimension most likely to fail first under real demand. Stabilise it before optimising anything else.`
-  }
-  if (result.standardMet) {
-    return `All four dimensions meet the standard. ${priority} is the one with the least margin, which makes it the most useful place to keep building.`
-  }
-  return `${priority} is currently doing the most to limit what the rest of your capability can produce.`
+  return `${nameOf(result.developmentPriority)} is a suggested starting point based on your responses. Check it against a recent example before choosing what to work on.`
 }
 
 export default function InstantResult({
   result,
   onRestart,
+  completedAt,
+  storageNotice,
 }: {
+  storageNotice?: string
+  completedAt?: string
   result: CapabilityResult
   onRestart: () => void
 }) {
-  const [unlocked, setUnlocked] = useState(false)
-  const [firstName, setFirstName] = useState('')
-  const [email, setEmail] = useState('')
+  const [chosenPriority, setChosenPriority] = useState<MKey | null>(null)
+  const [choiceStorageIssue, setChoiceStorageIssue] = useState(false)
+  const choiceStorageKey = `ng.profile-plan.${completedAt ?? 'legacy'}.${JSON.stringify(result.scores)}.${JSON.stringify(result.demands)}`
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        const saved = window.localStorage.getItem(choiceStorageKey) as MKey | null
+        if (saved && result.priorityCandidates.includes(saved)) setChosenPriority(saved)
+      } catch {
+        setChoiceStorageIssue(true)
+      }
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [choiceStorageKey, result.priorityCandidates])
+  const choosePriority = (key: MKey) => {
+    setChosenPriority(key)
+    try {
+      window.localStorage.setItem(choiceStorageKey, key)
+      setChoiceStorageIssue(false)
+    } catch {
+      setChoiceStorageIssue(true)
+    }
+  }
   const [expanded, setExpanded] = useState<MKey | null>(null)
 
-  const priority = result.developmentPriority
+  const priority = chosenPriority ?? result.developmentPriority
+  const needsChoice = result.priorityCandidates.length > 1 && !chosenPriority
   const priorityBand = bandFor(result.scores[priority])
   const plan = THIRTY_DAY_PLANS[priority]
 
   const highScores = DIMENSIONS.filter((d) => result.scores[d.key] >= 9.0)
 
   return (
-    <div className="min-h-svh bg-ink-900 pb-24 pt-28 md:pt-32">
+    <div className="profile-result min-h-svh bg-ink-900 pb-24 pt-28 md:pt-32">
       <Container width="narrow">
         {/* ═══ FREE INSTANT RESULT ══════════════════════════════════ */}
         <p className="label label-bronze">The Four M Capability Profile</p>
@@ -69,13 +87,19 @@ export default function InstantResult({
           Your Capability Profile
         </h1>
 
+        {storageNotice && <p role="status" className="mt-6 border border-border-input p-4 text-base text-text-body">{storageNotice}</p>}
         <div className="mt-11 border border-hairline bg-ink-850 p-6 md:p-9">
           <ScoreBars
             scores={result.scores}
             demands={result.demands}
-            highlight={priority}
+            highlight={needsChoice ? null : priority}
           />
         </div>
+
+        <p className="mt-6 text-base leading-relaxed text-text-body">
+          These are self-reported patterns, not independently verified abilities or a prediction of performance.
+          The bands and 8 standard belong to this framework, not a population comparison.
+        </p>
 
         {/* Standard status — never an average */}
         <div className="mt-8 border border-hairline bg-ink-850/60 p-5">
@@ -93,19 +117,18 @@ export default function InstantResult({
         <div className="mt-6 grid gap-px border border-hairline bg-hairline sm:grid-cols-2">
           <div className="bg-ink-850 p-5">
             <p className="label">
-              {result.coAdvantage ? 'Co-advantages' : 'Current advantage'}
+              {result.advantages.length === 4 ? 'Similar reported scores' : 'Highest reported areas'}
             </p>
             <p className="mt-2 font-display text-2xl font-semibold text-bone-50">
-              {nameOf(result.advantage)}
-              {result.coAdvantage && ` + ${nameOf(result.coAdvantage)}`}
+              {result.advantages.map(nameOf).join(' · ')}
             </p>
           </div>
           <div className="bg-ink-850 p-5">
             <p className="label">
-              {result.constraint ? 'Current constraint' : 'Development priority'}
+              Suggested starting areas
             </p>
             <p className="mt-2 font-display text-2xl font-semibold text-bone-50">
-              {nameOf(result.constraint ?? priority)}
+              {result.priorityCandidates.map(nameOf).join(' · ')}
             </p>
           </div>
         </div>
@@ -115,8 +138,7 @@ export default function InstantResult({
           <div className="mt-6 border border-hairline bg-ink-850 p-5">
             <p className="label">Responsibility-Capability Gap</p>
             <p className="mt-2 font-display text-xl font-semibold text-bone-50">
-              {GAP_LABELS[result.largestGap.category]} ·{' '}
-              {nameOf(result.largestGap.dimension)}
+              {result.largestGapDimensions.map((key) => `${nameOf(key)}: ${GAP_LABELS[result.gaps![key]]}`).join(' · ')}
             </p>
             <p className="mt-2 text-[0.875rem] leading-relaxed text-text-muted">
               {GAP_DESCRIPTIONS[result.largestGap.category]}
@@ -126,22 +148,20 @@ export default function InstantResult({
           <div className="mt-6 border border-hairline bg-ink-850 p-5">
             <p className="label">Responsibility-Capability Gap</p>
             <p className="mt-2 font-display text-xl font-semibold text-bone-50">
-              No current gap
+              {result.demands ? 'No reported gap' : 'Demand not assessed'}
             </p>
             <p className="mt-2 text-[0.875rem] leading-relaxed text-text-muted">
-              Your current capability appears to meet or exceed the responsibility
-              demand you described.
+              {result.demands ? 'Your reported capability meets or exceeds your reported demand.' : 'Without demand responses, this profile cannot describe a responsibility-capability gap.'}
             </p>
           </div>
         )}
 
         {result.oneDimensionalRisk && (
           <div className="mt-6 border border-bronze-500/40 bg-bronze-500/[0.06] p-5">
-            <p className="label label-bronze">One-dimensional risk detected</p>
+            <p className="label label-bronze">Reported score spread</p>
             <p className="mt-2 text-[0.9375rem] leading-relaxed text-text-body">
-              Your strongest dimension is materially ahead of your weakest. That
-              imbalance can become a constraint when responsibility lands on the
-              underdeveloped area.
+              Your scores differ by at least two points. Look for a real example of
+              whether this difference matters to your current responsibilities.
             </p>
           </div>
         )}
@@ -151,84 +171,29 @@ export default function InstantResult({
           {immediateInsight(result)}
         </p>
 
-        {result.closeDevelopmentAreas && (
-          <p className="mt-4 text-[0.875rem] leading-relaxed text-text-muted">
-            Two close development areas:{' '}
-            {nameOf(result.closeDevelopmentAreas[0])} and{' '}
-            {nameOf(result.closeDevelopmentAreas[1])}. They are closely matched,
-            so the one with higher responsibility demand was prioritised.
-          </p>
+        {result.priorityCandidates.length > 1 && (
+          <fieldset className="mt-8 border-t border-hairline pt-6">
+            <legend className="font-display text-xl font-semibold text-bone-50">Choose one plan to start</legend>
+            <p className="mt-3 text-base leading-relaxed text-text-body">These areas are close or carry competing signals. A small score difference does not establish which change will help most. Choose the area that fits a concrete responsibility; you can change it below.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              {result.priorityCandidates.map((key) => (
+                <button key={key} type="button" aria-pressed={chosenPriority === key}
+                  onClick={() => choosePriority(key)}
+                  className={cn('min-h-11 border border-border-input px-5 py-3 text-base text-bone-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt-400', chosenPriority === key ? 'bg-cobalt-500' : 'bg-ink-850 hover:bg-ink-800')}>
+                  {nameOf(key)}
+                </button>
+              ))}
+            </div>
+            <p role="status" className="mt-3 text-sm text-text-muted">{chosenPriority ? `${nameOf(chosenPriority)} plan selected.` : 'No plan selected yet.'} {choiceStorageIssue && 'Browser storage is unavailable. Your plan choice may reset on reload; save a printed copy.'}</p>
+          </fieldset>
         )}
-
-        {/* ═══ EMAIL UNLOCK ═════════════════════════════════════════ */}
-        {!unlocked ? (
-          <div className="mt-12 border border-hairline bg-ink-850 p-6 md:p-9">
-            <h2 className="font-display text-2xl font-semibold text-bone-50">
-              Unlock my full profile
-            </h2>
-            <p className="mt-3 text-[0.9375rem] leading-relaxed text-text-muted">
-              Get your complete score interpretation, 30-day development plan,
-              recommended resources, and retest reminder.
-            </p>
-
-            <form
-              className="mt-7 space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault()
-                setUnlocked(true)
-              }}
-            >
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="block">
-                  <span className="label">First name</span>
-                  <input
-                    type="text"
-                    required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="mt-2 w-full border border-hairline-bright bg-ink-900 px-4 py-3 text-[0.9375rem] text-bone-50 placeholder:text-slate-600 focus:border-cobalt-500 focus:outline-none"
-                    placeholder="Your first name"
-                  />
-                </label>
-                <label className="block">
-                  <span className="label">Email</span>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-2 w-full border border-hairline-bright bg-ink-900 px-4 py-3 text-[0.9375rem] text-bone-50 placeholder:text-slate-600 focus:border-cobalt-500 focus:outline-none"
-                    placeholder="you@example.com"
-                  />
-                </label>
-              </div>
-
-              <Button type="submit" variant="primary" size="lg" className="w-full sm:w-auto">
-                Unlock my full profile
-              </Button>
-            </form>
-
-            {/* Honesty about the current build. This copy is temporary and
-                should be replaced when a database and email provider are
-                connected. */}
-            <p className="mt-6 border-t border-hairline pt-5 text-[0.75rem] leading-relaxed text-slate-600">
-              Preview build: this form does not yet send anything or store your
-              details on a server. Your responses stay in this browser only.
-            </p>
-          </div>
-        ) : (
-          <FullProfile
-            result={result}
-            firstName={firstName}
-            priority={priority}
-            priorityBand={priorityBand}
-            plan={plan}
-            expanded={expanded}
-            setExpanded={setExpanded}
-            highScores={highScores.map((d) => d.key)}
-            onRestart={onRestart}
-          />
-        )}
+        <p className="mt-10 text-base leading-relaxed text-text-body">Your full profile is available below, in this browser. No email is sent. Save a copy for yourself and add a calendar reminder if you want to return.</p>
+        <FullProfile
+          result={result} priority={priority} priorityBand={priorityBand} plan={plan}
+          expanded={expanded} setExpanded={setExpanded}
+          highScores={highScores.map((d) => d.key)} onRestart={onRestart}
+          needsChoice={needsChoice} completedAt={completedAt}
+        />
       </Container>
     </div>
   )
@@ -240,7 +205,6 @@ export default function InstantResult({
 
 function FullProfile({
   result,
-  firstName,
   priority,
   priorityBand,
   plan,
@@ -248,9 +212,10 @@ function FullProfile({
   setExpanded,
   highScores,
   onRestart,
+  needsChoice,
+  completedAt,
 }: {
   result: CapabilityResult
-  firstName: string
   priority: MKey
   priorityBand: ReturnType<typeof bandFor>
   plan: (typeof THIRTY_DAY_PLANS)[MKey]
@@ -258,23 +223,19 @@ function FullProfile({
   setExpanded: (v: MKey | null) => void
   highScores: MKey[]
   onRestart: () => void
+  needsChoice: boolean
+  completedAt?: string
 }) {
-  const retestDate = (() => {
-    const d = new Date()
-    d.setDate(d.getDate() + 75)
-    return d.toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  })()
+  const [evidence, setEvidence] = useState('')
+  const reminder = completedAt ? retestCalendar(completedAt) : null
+  const retestDate = reminder?.date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
 
   return (
     <div className="mt-14">
       <div className="rule" />
 
       <h2 className="mt-12 font-display text-3xl font-bold tracking-[-0.02em] text-bone-50 md:text-4xl">
-        {firstName ? `${firstName}, your` : 'Your'} full profile
+        Your full profile
       </h2>
 
       {/* ── Per-dimension narratives ───────────────────────────────── */}
@@ -291,7 +252,7 @@ function FullProfile({
                     {d.name}
                   </h3>
                   <span className="flex items-baseline gap-3">
-                    <span className="label">{BANDS[band].label}</span>
+                    <span className="label">{score >= 9 ? `${BANDS[band].label} range, self-reported` : BANDS[band].label}</span>
                     <span className="font-display text-xl tabular-nums text-bone-50">
                       {score.toFixed(1)}
                     </span>
@@ -316,11 +277,16 @@ function FullProfile({
             concrete example from the past 12 months where this capability
             produced a meaningful outcome under real demand?
           </p>
+          <label htmlFor="profile-evidence" className="mt-4 block text-sm text-text-body">Optional example (not saved; include it in your printed copy)</label>
           <textarea
+            id="profile-evidence"
             rows={3}
+            value={evidence}
+            onChange={(event) => setEvidence(event.target.value)}
             placeholder="Optional. A real example, not a summary of your intentions."
-            className="mt-4 w-full border border-hairline-bright bg-ink-900 px-4 py-3 text-[0.9375rem] text-bone-50 placeholder:text-slate-600 focus:border-cobalt-500 focus:outline-none"
+            className="mt-4 w-full border border-border-input bg-ink-900 px-4 py-3 text-base text-bone-50 placeholder:text-slate-600 focus:border-cobalt-500 focus:outline-none print:hidden"
           />
+          <p className="hidden whitespace-pre-wrap break-words print:block">{evidence || 'No example recorded.'}</p>
           <p className="mt-3 text-[0.75rem] leading-relaxed text-slate-600">
             A self-reported score can reach 9.0, but Proven and Exceptional are
             designations that evidence earns. Nothing here is independently
@@ -329,9 +295,10 @@ function FullProfile({
         </section>
       )}
 
+      {!needsChoice ? <>
       {/* ── Primary development priority ───────────────────────────── */}
       <section className="mt-10 border border-cobalt-500/30 bg-cobalt-500/[0.05] p-6 md:p-8">
-        <p className="label label-cobalt">Primary development priority</p>
+        <p className="label label-cobalt">Starting area for this plan</p>
         <h3 className="mt-3 font-display text-3xl font-bold text-bone-50">
           {nameOf(priority)}
         </h3>
@@ -419,11 +386,13 @@ function FullProfile({
         </div>
       </section>
 
+      </> : <p className="mt-10 text-base text-text-body">Choose a starting area above to see one 30-day plan. All four score interpretations remain available here.</p>}
+
       {/* ── Share card ─────────────────────────────────────────────── */}
       <section className="mt-12">
         <p className="label">Share card</p>
         <div className="mt-5">
-          <ShareCard result={result} />
+          <ShareCard result={result} selectedPriority={needsChoice ? null : priority} />
         </div>
         <p className="mt-3 text-[0.75rem] leading-relaxed text-slate-600">
           Your responsibility demand answers, gap figures, and any evidence you
@@ -435,7 +404,7 @@ function FullProfile({
       <section className="mt-12 border border-hairline bg-ink-850 p-6">
         <p className="label label-bronze">Retest window</p>
         <p className="mt-2 font-display text-xl font-semibold text-bone-50">
-          {retestDate}
+          {retestDate ?? 'Return in about 75 days'}
         </p>
         <p className="mt-3 text-[0.9375rem] leading-relaxed text-text-muted">
           The goal is not to collect a better identity label. It is to produce
@@ -443,12 +412,19 @@ function FullProfile({
         </p>
       </section>
 
+      <div className="mt-6 flex flex-wrap gap-4 print:hidden">
+        <Button type="button" variant="secondary" onClick={() => window.print()}>Print or save profile</Button>
+        {reminder && <a className="inline-flex min-h-11 items-center border border-border-input px-5 py-3 text-base text-bone-50 hover:bg-ink-850" href={`data:text/calendar;charset=utf-8,${encodeURIComponent(reminder.calendar)}`} download="capability-retest.ics">Download calendar reminder</a>}
+      </div>
+      <p className="mt-3 text-sm leading-relaxed text-text-muted">Printing lets you save a PDF. Import the downloaded file into your calendar to schedule a reminder; nothing is scheduled automatically. Browser storage can be cleared, and a score change alone does not prove capability changed.</p>
+
       {/* ── Next path ──────────────────────────────────────────────── */}
+      <ProfileSubscription />
       <section className="mt-12">
         <p className="label">Where to go next</p>
         <ul className="mt-5 grid gap-px bg-hairline sm:grid-cols-2">
           {[
-            { href: `/ideas/${priority}`, label: `Ideas on ${nameOf(priority)}` },
+            { href: needsChoice ? '/ideas' : `/ideas/${priority}`, label: needsChoice ? 'Explore Ideas' : `Ideas on ${nameOf(priority)}` },
             { href: '/work/individuals', label: 'Work with Neil' },
             { href: '/books', label: 'Exposed & Ignite' },
             { href: '/community', label: 'The DMV community' },

@@ -12,8 +12,8 @@ import type { MKey } from './constants'
 
 export const QUESTION_SET_VERSION = 'v1.0.0'
 export const SCORING_VERSION = 'v1.0.0'
-export const PRIORITY_LOGIC_VERSION = 'v1.0.0'
-export const RESULT_COPY_VERSION = 'v1.0.0'
+export const PRIORITY_LOGIC_VERSION = 'v1.1.0'
+export const RESULT_COPY_VERSION = 'v1.1.0'
 
 /* ─── Response scale ───────────────────────────────────────────────────
    "Usually true" maps to exactly 8.0 — the Capability Standard. The
@@ -73,12 +73,12 @@ export const GAP_LABELS: Record<GapCategory, string> = {
 }
 
 export const GAP_DESCRIPTIONS: Record<GapCategory, string> = {
-  no_gap: 'Current capability meets or exceeds the demand you have described.',
-  watch: 'Demand is approaching your current capability in this dimension.',
+  no_gap: 'Your reported capability meets or exceeds your reported demand.',
+  watch: 'Your reported demand is slightly above your reported capability.',
   active:
-    'Responsibility is outpacing current capability enough to deserve deliberate attention.',
+    'Your responses suggest a gap worth exploring with concrete examples.',
   critical:
-    'Demand materially exceeds current capability here. This should be prioritised.',
+    'Your reported demand is substantially higher than your reported capability. Review what support or change would help.',
 }
 
 /** Gap = demand − capability, within the same dimension. */
@@ -111,14 +111,19 @@ export interface CapabilityResult {
   demands: Demands | null
   /** Standard is met only when all four reach 8.0. Never an average. */
   standardMet: boolean
+  /** All dimensions within the provisional 0.3 comparison tolerance. */
+  advantages: MKey[]
+  priorityCandidates: MKey[]
+  largestGapDimensions: MKey[]
+  /** Legacy presentation representative; use advantages to avoid hiding ties. */
   advantage: MKey
   /** Populated when the top two scores sit within 0.3 of each other. */
   coAdvantage: MKey | null
   /** Lowest below 8.0. Null when all four already meet the standard. */
   constraint: MKey | null
-  /** Exactly one dimension. Selected by the priority ladder. */
+  /** Compatibility default for a plan. Use priorityCandidates for interpretation; ties require user choice. */
   developmentPriority: MKey
-  /** True when the two lowest sit within 0.3 and the tie needed breaking. */
+  /** Legacy first two candidates; use priorityCandidates for the complete set. */
   closeDevelopmentAreas: [MKey, MKey] | null
   oneDimensionalRisk: boolean
   gaps: Record<MKey, GapCategory> | null
@@ -140,61 +145,26 @@ export function dimensionScore(responses: number[]): number {
   return Math.round(mean * 10) / 10
 }
 
-/**
- * Selects the single Primary Development Priority.
- *
- * Ladder, in order:
- *   1. Critical Responsibility-Capability Gap
- *   2. Breakpoint score below 4.0
- *   3. Largest Active Gap
- *   4. Lowest Capability score below 8.0
- *   5. All four at standard → lowest becomes the Development Priority
- *
- * Ties break on higher Responsibility Demand first, then lower score.
- */
-function selectPriority(
-  scores: Scores,
-  demands: Demands | null,
-  gaps: Record<MKey, GapCategory> | null
-): { priority: MKey; close: [MKey, MKey] | null } {
-  const byDemandThenScore = (a: MKey, b: MKey) => {
-    if (demands) {
-      const d = demands[b] - demands[a]
-      if (d !== 0) return d
-    }
-    return scores[a] - scores[b]
-  }
+/** Provisional interpretation tolerance, not a validated statistical interval. */
+export const COMPARISON_TOLERANCE = 0.3
+const closeEnough = (a: number, b: number) => Math.abs(a - b) <= COMPARISON_TOLERANCE + 1e-9
 
-  // Tier 1 — critical gaps and breakpoints share the highest priority.
-  const tier1 = KEYS.filter(
-    (k) => (gaps && gaps[k] === 'critical') || scores[k] < 4.0
-  )
-  if (tier1.length > 0) {
-    return { priority: [...tier1].sort(byDemandThenScore)[0], close: null }
+/** Preserve all near ties. Ordering is presentation only, never evidence of superiority. */
+function selectPriority(scores: Scores, demands: Demands | null, gaps: Record<MKey, GapCategory> | null): MKey[] {
+  const urgent = KEYS.filter((k) => gaps?.[k] === 'critical' || scores[k] < 4)
+  if (urgent.length) {
+    // Different urgent signals are not commensurate enough to rank confidently.
+    return urgent
   }
-
-  // Tier 2 — the largest active gap.
-  if (gaps && demands) {
-    const activeKeys = KEYS.filter((k) => gaps[k] === 'active')
-    if (activeKeys.length > 0) {
-      const largest = [...activeKeys].sort(
-        (a, b) => demands[b] - scores[b] - (demands[a] - scores[a])
-      )[0]
-      return { priority: largest, close: null }
+  if (demands && gaps) {
+    const active = KEYS.filter((k) => gaps[k] === 'active')
+    if (active.length) {
+      const maximum = Math.max(...active.map((k) => demands[k] - scores[k]))
+      return active.filter((k) => closeEnough(demands[k] - scores[k], maximum))
     }
   }
-
-  // Tier 3 — the lowest score, whether or not it is below the standard.
-  const ascending = [...KEYS].sort((a, b) => scores[a] - scores[b])
-  const [lowest, second] = ascending
-
-  // Avoid false precision: a 0.1 difference is not a real distinction.
-  if (Math.abs(scores[lowest] - scores[second]) <= 0.3) {
-    const resolved = [lowest, second].sort(byDemandThenScore)[0]
-    return { priority: resolved, close: [lowest, second] }
-  }
-
-  return { priority: lowest, close: null }
+  const minimum = Math.min(...KEYS.map((k) => scores[k]))
+  return KEYS.filter((k) => closeEnough(scores[k], minimum))
 }
 
 export function buildResult(scores: Scores, demands: Demands | null): CapabilityResult {
@@ -218,7 +188,11 @@ export function buildResult(scores: Scores, demands: Demands | null): Capability
     }
   }
 
-  const { priority, close } = selectPriority(scores, demands, gaps)
+  const priorityCandidates = selectPriority(scores, demands, gaps)
+  const advantages = KEYS.filter((k) => closeEnough(scores[k], scores[top]))
+  const largestGapDimensions = demands && largestGap
+    ? KEYS.filter((k) => demands[k] - scores[k] > 0 && closeEnough(demands[k] - scores[k], demands[largestGap.dimension] - scores[largestGap.dimension]))
+    : []
 
   const values = KEYS.map((k) => scores[k])
   const spread = Math.max(...values) - Math.min(...values)
@@ -233,12 +207,15 @@ export function buildResult(scores: Scores, demands: Demands | null): Capability
     scores,
     demands,
     standardMet: KEYS.every((k) => scores[k] >= STANDARD),
+    advantages,
+    priorityCandidates,
+    largestGapDimensions,
     advantage: top,
     coAdvantage:
       Math.abs(scores[top] - scores[secondTop]) <= 0.3 ? secondTop : null,
     constraint,
-    developmentPriority: priority,
-    closeDevelopmentAreas: close,
+    developmentPriority: priorityCandidates[0],
+    closeDevelopmentAreas: priorityCandidates.length > 1 ? [priorityCandidates[0], priorityCandidates[1]] : null,
     // Provisional threshold, to be recalibrated against pilot data.
     oneDimensionalRisk: spread >= 2.0,
     gaps,
@@ -250,4 +227,25 @@ export function buildResult(scores: Scores, demands: Demands | null): Capability
       resultCopy: RESULT_COPY_VERSION,
     },
   }
+}
+
+export function retestCalendar(completedAt: string): { date: Date; calendar: string } | null {
+  const completed = new Date(completedAt)
+  if (!Number.isFinite(completed.getTime())) return null
+  const date = new Date(completed)
+  date.setDate(date.getDate() + 75)
+  const stamp = (d: Date) => `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`
+  const end = new Date(date)
+  end.setDate(end.getDate() + 1)
+  return { date, calendar: [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Neil Greene//Capability Profile//EN',
+    'BEGIN:VEVENT', `UID:capability-retest-${completed.getTime()}@iamneilgreene.com`,
+    `DTSTAMP:${completed.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z')}`,
+    `DTSTART;VALUE=DATE:${stamp(date)}`, `DTEND;VALUE=DATE:${stamp(end)}`,
+    'SUMMARY:Revisit your Capability Profile',
+    'DESCRIPTION:Review concrete examples of change and retake the self-assessment.',
+    'URL:https://iamneilgreene.com/capability-profile/start',
+    'BEGIN:VALARM', 'TRIGGER:-PT9H', 'ACTION:DISPLAY', 'DESCRIPTION:Revisit your Capability Profile',
+    'END:VALARM', 'END:VEVENT', 'END:VCALENDAR', '',
+  ].join('\r\n') }
 }

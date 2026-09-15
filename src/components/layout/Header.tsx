@@ -83,7 +83,7 @@ export default function Header() {
         className={cn(
           'fixed inset-x-0 top-0 z-50 transition-colors duration-300',
           scrolled || menuOpen
-            ? 'bg-ink-900/92 backdrop-blur-md border-b border-hairline'
+            ? 'bg-ink-900 border-b border-hairline'
             : 'bg-transparent border-b border-transparent'
         )}
       >

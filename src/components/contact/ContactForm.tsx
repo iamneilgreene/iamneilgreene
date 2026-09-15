@@ -1,19 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Button from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
-
-/**
- * Routed contact form with a reason-for-contact selector, pre-selected from
- * the `?reason=` parameter that the speaking, organizations, and community
- * pages link with.
- *
- * NOTE: no submission endpoint is wired up in this build. Rather than
- * pretending to send, the form says so plainly and offers a mailto fallback,
- * so nobody believes a message went somewhere it did not.
- */
 
 const REASONS = [
   { value: 'speaking', label: 'Speaking inquiry' },
@@ -23,130 +13,99 @@ const REASONS = [
   { value: 'media', label: 'Media or partnership' },
   { value: 'other', label: 'Something else' },
 ] as const
+const inputClass = 'mt-2 w-full border border-border-input bg-ink-900 px-4 py-3 text-base text-bone-50 placeholder:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobalt-400'
 
 export default function ContactForm() {
   const params = useSearchParams()
   const initial = params.get('reason')
-  const [reason, setReason] = useState<string>(
-    REASONS.some((r) => r.value === initial) ? (initial as string) : 'speaking'
-  )
+  const [reason, setReason] = useState<string>(REASONS.some((r) => r.value === initial) ? initial! : 'other')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  const [sent, setSent] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
+  const inFlight = useRef(false)
+  const statusRef = useRef<HTMLDivElement>(null)
+  const reasonLabel = REASONS.find((r) => r.value === reason)?.label ?? 'Inquiry'
+  const mailto = `mailto:hello@iamneilgreene.com?subject=${encodeURIComponent(reasonLabel)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`
 
-  const mailto = `mailto:hello@iamneilgreene.com?subject=${encodeURIComponent(
-    REASONS.find((r) => r.value === reason)?.label ?? 'Inquiry'
-  )}&body=${encodeURIComponent(message)}`
-
-  if (sent) {
-    return (
-      <div className="border border-hairline bg-ink-900 p-8 text-center">
-        <p className="label label-bronze">Not sent</p>
-        <h2 className="mt-4 font-display text-2xl font-semibold text-bone-50">
-          This form is not connected yet.
-        </h2>
-        <p className="mt-4 text-[0.9375rem] leading-relaxed text-text-muted">
-          Rather than silently discard your message, here it is as an email you
-          can send directly.
-        </p>
-        <a
-          href={mailto}
-          className="mt-6 inline-flex items-center gap-2 border border-hairline-bright px-5 py-2.5 text-sm text-bone-50 transition-colors hover:border-slate-500"
-        >
-          Open in your email client
-        </a>
-        <button
-          type="button"
-          onClick={() => setSent(false)}
-          className="mt-6 block w-full text-[0.8125rem] text-slate-600 transition-colors hover:text-text-muted"
-        >
-          Back to the form
-        </button>
-      </div>
-    )
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (inFlight.current || saved) return
+    inFlight.current = true
+    setPending(true)
+    setError('')
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, reason, message }),
+        signal: AbortSignal.timeout(30_000),
+      })
+      const payload = await response.json()
+      if (!response.ok || payload.success !== true || payload.receipt !== 'saved') {
+        throw new Error(typeof payload.error === 'string' ? payload.error : 'We could not confirm your inquiry was saved. Your text is still here; please use the email link below.')
+      }
+      setSaved(true)
+    } catch (failure) {
+      setError(failure instanceof Error && failure.name === 'Error'
+        ? failure.message
+        : 'We could not confirm receipt. Your text is still here; please use the email link below and mention this error.')
+    } finally {
+      setPending(false)
+      inFlight.current = false
+      window.requestAnimationFrame(() => statusRef.current?.focus())
+    }
   }
 
   return (
-    <form
-      className="space-y-7"
-      onSubmit={(e) => {
-        e.preventDefault()
-        setSent(true)
-      }}
-    >
-      <fieldset>
-        <legend className="label">Reason for contact</legend>
-        <div className="mt-4 grid gap-px bg-hairline sm:grid-cols-2">
-          {REASONS.map((r) => (
-            <label
-              key={r.value}
-              className={cn(
-                'cursor-pointer px-5 py-3.5 text-[0.9375rem] transition-colors',
-                reason === r.value
-                  ? 'bg-cobalt-500/10 text-bone-50'
-                  : 'bg-ink-900 text-text-muted hover:bg-ink-850 hover:text-text-body'
-              )}
-            >
-              <input
-                type="radio"
-                name="reason"
-                value={r.value}
-                checked={reason === r.value}
-                onChange={() => setReason(r.value)}
-                className="sr-only"
-              />
-              {r.label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="block">
-          <span className="label">Name</span>
-          <input
-            type="text"
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-2 w-full border border-hairline-bright bg-ink-900 px-4 py-3 text-[0.9375rem] text-bone-50 placeholder:text-slate-600 focus:border-cobalt-500 focus:outline-none"
-            placeholder="Your name"
-          />
-        </label>
-        <label className="block">
-          <span className="label">Email</span>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 w-full border border-hairline-bright bg-ink-900 px-4 py-3 text-[0.9375rem] text-bone-50 placeholder:text-slate-600 focus:border-cobalt-500 focus:outline-none"
-            placeholder="you@example.com"
-          />
-        </label>
+    <form className="space-y-7" onSubmit={submit} aria-busy={pending}>
+      <div ref={statusRef} tabIndex={-1} className="focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalt-400">
+        {saved && <div role="status" className="border border-hairline bg-ink-850 p-6">
+          <h2 className="font-display text-2xl font-semibold text-bone-50">Your inquiry is saved.</h2>
+          <p className="mt-3 text-base leading-relaxed text-text-body">Your message and contact details are recorded for Neil to review. This is a saved inquiry, not an email delivery confirmation. You have not been subscribed to educational emails.</p>
+        </div>}
+        {error && <p role="alert" className="border border-border-input p-5 text-base leading-relaxed text-bone-50">{error}</p>}
       </div>
 
-      <label className="block">
-        <span className="label">Message</span>
-        <textarea
-          required
-          rows={6}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="mt-2 w-full border border-hairline-bright bg-ink-900 px-4 py-3 text-[0.9375rem] text-bone-50 placeholder:text-slate-600 focus:border-cobalt-500 focus:outline-none"
-          placeholder="What are you carrying, and what would help?"
-        />
-      </label>
+      <fieldset disabled={pending || saved} className="space-y-7 disabled:opacity-75">
+        <legend className="sr-only">Contact details</legend>
+        <fieldset>
+          <legend className="label">Reason for contact</legend>
+          <div className="mt-4 grid gap-px bg-hairline sm:grid-cols-2">
+            {REASONS.map((r) => <label key={r.value} className={cn(
+              'flex min-h-11 cursor-pointer items-center gap-3 px-5 py-3.5 text-base transition-colors focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-cobalt-400',
+              reason === r.value ? 'bg-cobalt-500/10 text-bone-50' : 'bg-ink-900 text-text-muted hover:bg-ink-850 hover:text-text-body'
+            )}>
+              <input type="radio" name="reason" value={r.value} checked={reason === r.value} onChange={(event) => setReason(event.target.value)} className="h-4 w-4 accent-cobalt-500" />
+              {r.label}
+            </label>)}
+          </div>
+        </fieldset>
 
-      <Button type="submit" variant="primary" size="lg">
-        Send
-      </Button>
-
-      <p className="border-t border-hairline pt-5 text-[0.75rem] leading-relaxed text-slate-600">
-        Preview build: no submission endpoint is connected yet. Submitting will
-        hand you a pre-filled email instead of pretending to deliver.
-      </p>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <label className="block">
+            <span className="label">Name</span>
+            <input name="name" autoComplete="name" type="text" required maxLength={120} value={name} onChange={(event) => setName(event.target.value)} className={inputClass} placeholder="Your name" />
+          </label>
+          <label className="block">
+            <span className="label">Email</span>
+            <input name="email" autoComplete="email" type="email" required maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} className={inputClass} placeholder="you@example.com" />
+          </label>
+        </div>
+        <label className="block">
+          <span className="label">Message</span>
+          <textarea name="message" required rows={6} maxLength={4000} value={message} onChange={(event) => setMessage(event.target.value)} className={inputClass} placeholder="What are you carrying, and what would help?" aria-describedby="contact-message-limit" />
+          <span id="contact-message-limit" className="mt-2 block text-sm text-text-muted">Up to 4,000 characters. Please leave out passwords and confidential client information.</span>
+        </label>
+        <Button type="submit" variant="primary" size="lg" disabled={pending || saved}>{pending ? 'Saving inquiry…' : saved ? 'Inquiry saved' : 'Send inquiry'}</Button>
+      </fieldset>
+      <p role="status" className="sr-only">{pending ? 'Saving your inquiry. Please wait.' : ''}</p>
+      {!saved && <div className="border-t border-hairline pt-5 text-sm leading-relaxed text-text-body">
+        <p>Your details and message will be stored privately in Neil&apos;s inquiry system so he can respond. Sending does not subscribe you to educational emails.</p>
+        <a href={mailto} className="mt-3 inline-flex min-h-11 items-center text-cobalt-300 underline underline-offset-4">Prefer email? Open a draft with these details</a>
+        <p className="text-text-muted">If an email app does not open, write to hello@iamneilgreene.com directly. Opening a draft does not send it.</p>
+      </div>}
     </form>
   )
 }

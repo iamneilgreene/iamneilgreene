@@ -18,7 +18,11 @@ export default function SpeakingPage() {
         eyebrow="Speaking"
         title="A room that leaves with a framework, not a feeling."
         lead="Sessions on capability, modern leadership, technology, resilience, and responsibility, built for audiences that are past motivation and want something they can use on Monday."
-      />
+      >
+        <Button href="/contact?reason=speaking" variant="primary" size="lg" className="mt-8">
+          Speaking inquiry
+        </Button>
+      </PageHero>
 
       <Section index="01" ground="ink-sunken" topRule>
         <h2 className="max-w-2xl font-display text-[2rem] font-bold leading-[1.1] tracking-[-0.03em] text-bone-50 md:text-4xl">
@@ -34,7 +38,7 @@ export default function SpeakingPage() {
             <li key={title} className="bg-ink-950 p-7 md:p-9">
               <div className="flex items-baseline gap-4">
                 <span className="font-mono text-[0.625rem] text-slate-600">0{i + 1}</span>
-                <h3 className="font-display text-xl font-normal text-bone-50 md:text-2xl">{title}</h3>
+                <h3 className="font-display text-xl font-semibold text-bone-50 md:text-2xl">{title}</h3>
               </div>
               <p className="ml-9 mt-3 max-w-2xl text-[0.9375rem] leading-relaxed text-text-muted">{body}</p>
             </li>
@@ -51,7 +55,7 @@ export default function SpeakingPage() {
             <ul className="mt-8 space-y-4">
               {[
                 'A shared language for capability across four dimensions.',
-                'A diagnostic question they can apply to their own role that week.',
+                'A practical question they can apply to their own role that week.',
                 'One prioritised development area rather than a list of everything.',
                 'Optional: the Four M Capability Profile run across the whole room.',
               ].map((l) => (
@@ -72,8 +76,9 @@ export default function SpeakingPage() {
               <li className="border-l border-hairline pl-5">Executive session or panel.</li>
             </ul>
             <p className="mt-8 text-[0.9375rem] leading-relaxed text-text-muted">
-              A speaker one-sheet and reel are being assembled. Until then, topic
-              outlines and references are shared directly on request.
+              Include your audience, preferred format, date, and the decision or
+              challenge you want the session to address. Those details are the
+              starting point for discussing fit and scope.
             </p>
           </div>
         </div>

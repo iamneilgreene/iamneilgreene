@@ -50,9 +50,13 @@ export default function PrivacyPage() {
               Email
             </h2>
             <p className="mt-4">
-              If you provide an email address, it is used to deliver your profile
-              and related educational communication. It is not sold. You can ask
-              for your data to be exported or deleted at any time.
+              If you subscribe after completing your profile, your name, email,
+              and permission to receive future educational updates are saved in
+              Neil&apos;s contact management system. Your assessment answers are
+              not included. Subscribing does not automatically email your profile
+              or schedule a reminder. You can save your profile and import a
+              calendar reminder yourself. Your email is not sold. You can withdraw
+              permission or request an export or deletion through the contact page.
             </p>
           </div>
 
@@ -61,7 +65,11 @@ export default function PrivacyPage() {
               Contact
             </h2>
             <p className="mt-4">
-              Questions about any of this can go through the contact page.
+              Contact inquiries save your name, email, chosen reason, and message
+              in Neil&apos;s contact management system so he can respond. Sending an
+              inquiry does not subscribe you to educational updates. Avoid including
+              sensitive information that is not needed for your inquiry. Privacy
+              questions can also go through the contact page.
             </p>
           </div>
         </div>

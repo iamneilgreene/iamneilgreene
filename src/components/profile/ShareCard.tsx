@@ -14,13 +14,15 @@ const nameOf = (key: MKey) => DIMENSIONS.find((d) => d.key === key)!.name
  * any evidence text stay private by construction: they are never rendered
  * here, so they cannot leak through a screenshot or a copied string.
  */
-export default function ShareCard({ result }: { result: CapabilityResult }) {
+export default function ShareCard({ result, selectedPriority = null }: { result: CapabilityResult; selectedPriority?: MKey | null }) {
   const [copied, setCopied] = useState(false)
+  const [copyFailed, setCopyFailed] = useState(false)
 
   const shareText = [
-    'I just completed the Four M Capability Profile.',
+    'My Four M Capability Profile: self-reported, not independently verified.',
     ...DIMENSIONS.map((d) => `${d.name}: ${result.scores[d.key].toFixed(1)}`),
-    `My development priority: ${nameOf(result.developmentPriority)}`,
+    selectedPriority ? `My chosen starting area: ${nameOf(selectedPriority)}` : `Suggested starting areas: ${result.priorityCandidates.map(nameOf).join(', ')}`,
+    'The 8 standard belongs to this framework; scores are not a population comparison.',
     'Responsibility demands capability.',
     'iamneilgreene.com',
   ].join('\n')
@@ -28,10 +30,12 @@ export default function ShareCard({ result }: { result: CapabilityResult }) {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(shareText)
+      setCopyFailed(false)
       setCopied(true)
       window.setTimeout(() => setCopied(false), 2200)
     } catch {
-      // Clipboard can be blocked by permissions; the card is still readable.
+      setCopied(false)
+      setCopyFailed(true)
     }
   }
 
@@ -42,6 +46,7 @@ export default function ShareCard({ result }: { result: CapabilityResult }) {
           The Four M Capability Profile
         </p>
 
+        <p className="mt-3 text-sm leading-relaxed text-text-body">Self-reported, not independently verified. The 8 standard belongs to this framework; these scores do not compare you with other people.</p>
         <ul className="mt-7 space-y-3">
           {DIMENSIONS.map((d) => (
             <li
@@ -61,26 +66,25 @@ export default function ShareCard({ result }: { result: CapabilityResult }) {
         <dl className="mt-7 grid grid-cols-2 gap-5">
           <div>
             <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.16em] text-slate-600">
-              {result.coAdvantage ? 'Co-advantages' : 'Current advantage'}
+              Highest reported areas
             </dt>
             <dd className="mt-1 font-display text-lg text-bone-50">
-              {nameOf(result.advantage)}
-              {result.coAdvantage && ` + ${nameOf(result.coAdvantage)}`}
+              {result.advantages.map(nameOf).join(' · ')}
             </dd>
           </div>
           <div>
             <dt className="font-mono text-[0.5625rem] uppercase tracking-[0.16em] text-slate-600">
-              Development priority
+              {selectedPriority ? 'Chosen starting area' : 'Suggested starting areas'}
             </dt>
             <dd className="mt-1 font-display text-lg text-bone-50">
-              {nameOf(result.developmentPriority)}
+              {selectedPriority ? nameOf(selectedPriority) : result.priorityCandidates.map(nameOf).join(' · ')}
             </dd>
           </div>
         </dl>
 
         <p className="mt-6 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-slate-500">
           {result.standardMet
-            ? 'Standard met'
+            ? 'Self-reported 8 standard met'
             : `Building toward the ${STANDARD.toFixed(1)} standard`}
         </p>
 
@@ -97,10 +101,14 @@ export default function ShareCard({ result }: { result: CapabilityResult }) {
       <button
         type="button"
         onClick={copy}
-        className="mt-4 border border-hairline-bright px-5 py-2.5 text-[0.8125rem] text-text-body transition-colors hover:border-slate-500 hover:text-bone-50"
+        className="mt-4 min-h-11 border border-border-input px-5 py-2.5 text-sm text-text-body transition-colors hover:border-slate-500 hover:text-bone-50"
       >
         {copied ? 'Copied' : 'Copy share text'}
       </button>
+      <p role="status" className="mt-3 text-sm text-text-body">{copied ? 'Share text copied.' : copyFailed ? 'Clipboard access was unavailable. Select and copy the text below.' : 'Sharing includes your scores. Share only what you are comfortable making public.'}</p>
+      {copyFailed && <label className="mt-3 block text-sm text-text-body">Share text
+        <textarea readOnly value={shareText} rows={9} onFocus={(event) => event.currentTarget.select()} className="mt-2 w-full border border-border-input bg-ink-900 p-3 text-base text-bone-50" />
+      </label>}
     </div>
   )
 }

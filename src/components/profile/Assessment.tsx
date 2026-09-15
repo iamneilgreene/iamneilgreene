@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import Container from '@/components/layout/Container'
 import Button from '@/components/ui/Button'
@@ -10,16 +10,9 @@ import { RESPONSE_CHOICES, dimensionScore, buildResult, type Scores } from '@/li
 import { DIMENSIONS, type MKey } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
-type Stage = 'instruction' | 'questions' | 'demand' | 'generating' | 'result'
+import { restoreAssessment, type SavedAssessment, type Stage } from './assessmentState'
 
 const STORAGE_KEY = 'ng.capability-profile.v1'
-
-interface Saved {
-  answers: Record<string, number>
-  demands: Record<string, number>
-  index: number
-  stage: Stage
-}
 
 /**
  * The Four M Capability Profile assessment.
@@ -28,9 +21,7 @@ interface Saved {
  * resumes rather than restarting.
  *
  * NOTE ON PERSISTENCE: this build stores responses in the browser only. There
- * is no server, no database, and no email delivery wired up yet — the email
- * unlock below is explicit with the participant about that rather than
- * pretending to send something.
+ * is no assessment-response endpoint. Results remain available locally.
  */
 export default function Assessment() {
   const [stage, setStage] = useState<Stage>('instruction')
@@ -38,6 +29,27 @@ export default function Assessment() {
   const [answers, setAnswers] = useState<Record<string, number>>({})
   const [demands, setDemands] = useState<Record<string, number>>({})
   const [restored, setRestored] = useState(false)
+  const [completedAt, setCompletedAt] = useState<string>()
+  const [storageNotice, setStorageNotice] = useState('')
+  const pending = useRef<number | null>(null)
+  const cancelAdvance = useCallback(() => {
+    if (pending.current !== null) clearTimeout(pending.current)
+    pending.current = null
+  }, [])
+  useEffect(() => cancelAdvance, [cancelAdvance])
+
+  // Each in-place screen is a new reading task. Focus announces its prompt;
+  // an instant top reset also removes the instruction screen's mobile offset.
+  useEffect(() => {
+    if (!restored) return
+    const frame = requestAnimationFrame(() => {
+      const heading = document.querySelector<HTMLElement>('#main h1')
+      heading?.setAttribute('tabindex', '-1')
+      heading?.focus({ preventScroll: true })
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [stage, index, restored])
 
   /* ── Resume any unfinished session ──────────────────────────────── */
   useEffect(() => {
@@ -47,14 +59,15 @@ export default function Assessment() {
       try {
         const raw = window.localStorage.getItem(STORAGE_KEY)
         if (raw) {
-          const saved = JSON.parse(raw) as Saved
-          if (saved.answers) setAnswers(saved.answers)
-          if (saved.demands) setDemands(saved.demands)
-          if (typeof saved.index === 'number') setIndex(saved.index)
-          if (saved.stage) setStage(saved.stage)
+          const saved = restoreAssessment(JSON.parse(raw))
+          setAnswers(saved.answers)
+          setDemands(saved.demands)
+          setIndex(saved.index)
+          setStage(saved.stage)
+          setCompletedAt(saved.completedAt)
         }
       } catch {
-        // A corrupt or unavailable store must never block the assessment.
+        setStorageNotice('Your saved answers could not be restored. You can continue here, but keep this page open until you save your profile.')
       }
       setRestored(true)
     })
@@ -66,12 +79,13 @@ export default function Assessment() {
     try {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ answers, demands, index, stage } satisfies Saved)
+        JSON.stringify({ answers, demands, index, stage, completedAt } satisfies SavedAssessment)
       )
     } catch {
-      // Private-mode storage failures are non-fatal.
+      const frame = window.requestAnimationFrame(() => setStorageNotice('Browser saving is unavailable. Keep this page open and print or save your completed profile before leaving.'))
+      return () => window.cancelAnimationFrame(frame)
     }
-  }, [answers, demands, index, stage, restored])
+  }, [answers, demands, index, stage, completedAt, restored])
 
   /* ── Scoring ────────────────────────────────────────────────────── */
   const result = useMemo(() => {
@@ -106,9 +120,11 @@ export default function Assessment() {
 
   const answer = useCallback(
     (value: number) => {
+      if (!restored || stage !== 'questions' || pending.current !== null) return
       setAnswers((prev) => ({ ...prev, [current.id]: value }))
       // Brief confirmation beat before advancing, so the choice registers.
-      window.setTimeout(() => {
+      pending.current = window.setTimeout(() => {
+        pending.current = null
         if (index + 1 < total) {
           setIndex(index + 1)
         } else {
@@ -117,13 +133,15 @@ export default function Assessment() {
         }
       }, 190)
     },
-    [current, index, total]
+    [current, index, total, restored, stage]
   )
 
   // Desktop keyboard shortcuts, 1–5.
   useEffect(() => {
     if (stage !== 'questions') return
     const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('#main') || e.repeat || e.ctrlKey || e.metaKey || e.altKey || target.matches('input, textarea, select, [contenteditable="true"]')) return
       const n = Number(e.key)
       if (n >= 1 && n <= 5) {
         e.preventDefault()
@@ -142,6 +160,8 @@ export default function Assessment() {
   }, [stage])
 
   const restart = () => {
+    cancelAdvance()
+    setCompletedAt(undefined)
     try {
       window.localStorage.removeItem(STORAGE_KEY)
     } catch {
@@ -157,7 +177,7 @@ export default function Assessment() {
   if (stage === 'instruction') {
     const inProgress = Object.keys(answers).length > 0
     return (
-      <Shell>
+      <Shell notice={storageNotice}>
         <p className="label label-bronze">The Four M Capability Profile</p>
         <h1 className="mt-6 font-display text-[2.25rem] font-bold leading-[1.08] tracking-[-0.03em] text-bone-50 md:text-5xl">
           Answer the person you are now.
@@ -192,7 +212,7 @@ export default function Assessment() {
         </div>
 
         <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button onClick={() => setStage('questions')} variant="primary" size="lg">
+          <Button disabled={!restored} onClick={() => setStage('questions')} variant="primary" size="lg">
             {inProgress ? 'Continue' : 'Begin'}
           </Button>
           {inProgress && (
@@ -213,15 +233,15 @@ export default function Assessment() {
   if (stage === 'questions') {
     const chosen = answers[current.id]
     return (
-      <Shell progress={(index) / total}>
+      <Shell notice={storageNotice} progress={index / (total + DEMAND_QUESTIONS.length)}>
         <div className="flex items-center justify-between">
-          <p className="label">
-            {index + 1} of {total}
+          <p id="assessment-position" className="label">
+            {index + 1} of {total + DEMAND_QUESTIONS.length}
           </p>
           {index > 0 && (
             <button
               type="button"
-              onClick={() => setIndex(index - 1)}
+              onClick={() => { cancelAdvance(); setIndex(index - 1) }}
               className="text-[0.8125rem] text-text-muted transition-colors hover:text-text-primary"
             >
               ← Back
@@ -231,7 +251,7 @@ export default function Assessment() {
 
         {/* The dimension is deliberately never shown: watching a domain score
             build in real time changes how people answer. */}
-        <h1 className="mt-10 font-display text-[1.75rem] font-bold leading-[1.28] tracking-[-0.02em] text-bone-50 md:text-[2.125rem] md:leading-[1.24]">
+        <h1 aria-describedby="assessment-position" className="mt-10 font-display text-[1.75rem] font-bold leading-[1.28] tracking-[-0.02em] text-bone-50 md:text-[2.125rem] md:leading-[1.24]">
           {current.text}
         </h1>
 
@@ -241,11 +261,12 @@ export default function Assessment() {
               <button
                 type="button"
                 onClick={() => answer(choice.value)}
+                aria-pressed={chosen === choice.value}
                 className={cn(
                   'group flex w-full items-center gap-4 border px-5 py-4 text-left transition-colors',
                   chosen === choice.value
                     ? 'border-cobalt-500 bg-cobalt-500/10 text-bone-50'
-                    : 'border-hairline bg-ink-850 text-text-body hover:border-hairline-bright hover:bg-ink-800'
+                    : 'border-border-input bg-ink-850 text-text-body hover:border-hairline-bright hover:bg-ink-800'
                 )}
               >
                 <span
@@ -278,17 +299,27 @@ export default function Assessment() {
     const value = demands[q.id] ?? 5
     const dimension = DIMENSIONS.find((d) => d.key === q.dimension)!
 
-    const setValue = (v: number) => setDemands((p) => ({ ...p, [q.id]: v }))
+    const setValue = (v: number) => {
+      cancelAdvance()
+      setDemands((p) => ({ ...p, [q.id]: v }))
+    }
 
     const next = () => {
-      // Ensure an untouched slider still records its default.
+      if (pending.current !== null) return
+      // An untouched slider explicitly accepts its visible default.
       setDemands((p) => ({ ...p, [q.id]: p[q.id] ?? 5 }))
-      if (index + 1 < DEMAND_QUESTIONS.length) setIndex(index + 1)
-      else setStage('generating')
+      pending.current = window.setTimeout(() => {
+        pending.current = null
+        if (index + 1 < DEMAND_QUESTIONS.length) setIndex(index + 1)
+        else {
+          setCompletedAt(new Date().toISOString())
+          setStage('generating')
+        }
+      }, 190)
     }
 
     return (
-      <Shell progress={0.86 + (index / DEMAND_QUESTIONS.length) * 0.14}>
+      <Shell notice={storageNotice} progress={(total + index) / (total + DEMAND_QUESTIONS.length)}>
         {index === 0 && (
           <div className="mb-10 border-l border-bronze-500/50 pl-5">
             <h2 className="font-display text-xl font-semibold text-bone-50">
@@ -304,12 +335,12 @@ export default function Assessment() {
 
         <div className="flex items-center justify-between">
           <p className="label label-bronze">{dimension.name} demand</p>
-          <p className="label">
-            {index + 1} of {DEMAND_QUESTIONS.length}
+          <p id="assessment-position" className="label">
+            {total + index + 1} of {total + DEMAND_QUESTIONS.length}
           </p>
         </div>
 
-        <h1 className="mt-8 font-display text-[1.625rem] font-semibold leading-[1.3] tracking-[-0.02em] text-bone-50 md:text-[2rem]">
+        <h1 aria-describedby="assessment-position" className="mt-8 font-display text-[1.625rem] font-semibold leading-[1.3] tracking-[-0.02em] text-bone-50 md:text-[2rem]">
           {q.text}
         </h1>
 
@@ -343,10 +374,10 @@ export default function Assessment() {
                 aria-label={`Set demand to ${n}`}
                 aria-pressed={value === n}
                 className={cn(
-                  'border py-2 font-mono text-[0.75rem] transition-colors',
+                  'min-h-11 border py-2 font-mono text-[0.75rem] transition-colors',
                   value === n
                     ? 'border-cobalt-500 bg-cobalt-500/15 text-cobalt-300'
-                    : 'border-hairline text-slate-500 hover:border-hairline-bright hover:text-text-body'
+                    : 'border-border-input text-slate-500 hover:border-hairline-bright hover:text-text-body'
                 )}
               >
                 {n}
@@ -368,15 +399,13 @@ export default function Assessment() {
           <Button onClick={next} variant="primary" size="lg">
             {index + 1 < DEMAND_QUESTIONS.length ? 'Next' : 'See my profile'}
           </Button>
-          {index > 0 && (
-            <button
-              type="button"
-              onClick={() => setIndex(index - 1)}
-              className="text-[0.8125rem] text-text-muted transition-colors hover:text-text-primary"
-            >
-              ← Back
-            </button>
-          )}
+          <button type="button" onClick={() => {
+            cancelAdvance()
+            if (index > 0) setIndex(index - 1)
+            else { setStage('questions'); setIndex(total - 1) }
+          }} className="min-h-11 text-[0.8125rem] text-text-muted transition-colors hover:text-text-primary">
+            ← Back
+          </button>
         </div>
       </Shell>
     )
@@ -385,7 +414,7 @@ export default function Assessment() {
   /* ═══ RESULT GENERATION ═════════════════════════════════════════ */
   if (stage === 'generating') {
     return (
-      <Shell>
+      <Shell notice={storageNotice} progress={1}>
         <div className="flex min-h-[40svh] flex-col justify-center">
           <ul className="space-y-2">
             {DIMENSIONS.map((d, i) => (
@@ -400,28 +429,30 @@ export default function Assessment() {
               </li>
             ))}
           </ul>
-          <p
+          <h1
             className="mt-8 font-display text-2xl font-semibold text-bone-50"
             style={{ animation: 'fade 0.5s ease 1.05s both' }}
           >
             Building your Capability Profile.
-          </p>
+          </h1>
         </div>
       </Shell>
     )
   }
 
   /* ═══ RESULT ════════════════════════════════════════════════════ */
-  return <InstantResult result={result} onRestart={restart} />
+  return <InstantResult result={result} onRestart={restart} completedAt={completedAt} storageNotice={storageNotice} />
 }
 
 /* ── Shared chrome for every assessment screen ──────────────────────── */
 function Shell({
   children,
   progress,
+  notice,
 }: {
   children: React.ReactNode
   progress?: number
+  notice?: string
 }) {
   return (
     <div className="min-h-svh bg-ink-900 pb-24 pt-24 md:pt-28">
@@ -429,9 +460,10 @@ function Shell({
         <div
           className="fixed inset-x-0 top-16 z-30 h-px bg-ink-700 md:top-[4.5rem]"
           role="progressbar"
-          aria-valuenow={Math.round(progress * 100)}
+          aria-valuenow={Math.round(progress * 28)}
+          aria-valuetext={`${Math.round(progress * 28)} of 28 responses completed`}
           aria-valuemin={0}
-          aria-valuemax={100}
+          aria-valuemax={28}
           aria-label="Assessment progress"
         >
           <div
@@ -442,7 +474,7 @@ function Shell({
       )}
 
       <Container width="narrow">
-        <div className="py-10 md:py-14">{children}</div>
+        <div className="py-10 md:py-14">{notice && <p role="status" className="mb-6 border border-border-input p-4 text-base text-text-body">{notice}</p>}{children}</div>
 
         <p className="mt-10 text-center text-[0.75rem] text-slate-600">
           <Link href="/capability-profile" className="hover:text-slate-500">

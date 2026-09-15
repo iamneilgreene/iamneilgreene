@@ -2,7 +2,7 @@ import type { MKey } from './constants'
 import type { Band } from './capability'
 
 /* ═══════════════════════════════════════════════════════════════════════
-   RESULT LANGUAGE — V1
+   RESULT LANGUAGE, V1
 
    Score-band narratives and 30-day development prescriptions, transcribed
    from the V1 Pilot Specification.
@@ -14,60 +14,36 @@ import type { Band } from './capability'
 
 export const BAND_NARRATIVES: Record<MKey, Record<Band, string>> = {
   mind: {
-    breakpoint:
-      'Your judgment and learning systems are not yet dependable enough for the decisions your life may require. Stabilise how you gather information, think, and decide before adding more complexity.',
-    constraint:
-      'You have useful knowledge, but it is not consistently converting into clear judgment, adaptation, or action. Mind is likely limiting the value of what you already know.',
-    functional:
-      'You can think and learn effectively under ordinary conditions, but the behaviour is not yet reliable enough to meet the standard across pressure, ambiguity, and change.',
-    capable:
-      'Your thinking is generally reliable. You usually learn, update, decide, and adapt well enough to support meaningful responsibility.',
-    proven:
-      'Your judgment has been repeatedly demonstrated across real decisions, changing conditions, and difficult problems. Mind is an established advantage.',
-    exceptional:
-      'Your judgment, learning, and adaptability are unusually strong and externally evident. You can reliably help other people think better, not merely think well yourself.',
+    breakpoint: 'You reported that behaviors supporting learning, judgment, and adapting are rarely dependable. Start by reviewing a recent decision and the evidence you used; choose one manageable change.',
+    constraint: 'Your responses suggest inconsistency in learning, judgment, and adapting. Review a recent decision and the evidence you used to decide whether this is a useful area to work on.',
+    functional: 'You reported some consistency in learning, judgment, and adapting, with room to build. Check this pattern against a recent decision and the evidence you used.',
+    capable: 'You usually report the behaviors supporting learning, judgment, and adapting. That meets this framework’s 8 standard; review a recent decision and the evidence you used to understand where the pattern holds.',
+    proven: 'You reported frequent consistency in learning, judgment, and adapting. The score sits in the Proven range, but evidence is needed before treating that label as earned. Document a recent decision and the evidence you used.',
+    exceptional: 'You consistently endorsed the behaviors supporting learning, judgment, and adapting. This is the top self-report range, not evidence of exceptional ability relative to others. Document a recent decision and the evidence you used and seek grounded feedback.',
   },
   means: {
-    breakpoint:
-      'You currently have too few usable resources, options, or forms of leverage. Dependence on a small number of people, systems, skills, or income sources creates material fragility.',
-    constraint:
-      'You have some useful resources, but they are not broad or dependable enough to create real optionality. Means is restricting what your knowledge and effort can produce.',
-    functional:
-      'You have workable skills, resources, relationships, and tools, but meaningful single points of dependence remain. The foundation works, but it is not yet resilient.',
-    capable:
-      'You generally have enough skills, resources, relationships, systems, and options to act without relying entirely on personal effort or one gatekeeper.',
-    proven:
-      'You have repeatedly converted assets, relationships, systems, technology, reputation, and capital into useful options and outcomes. Means is an established advantage.',
-    exceptional:
-      'Your resources and leverage are unusually deep, diversified, and transferable. You can create options for yourself and often for other people as well.',
+    breakpoint: 'You reported that behaviors supporting resources, relationships, and usable options are rarely dependable. Start by reviewing a dependency and the alternatives actually available; choose one manageable change.',
+    constraint: 'Your responses suggest inconsistency in resources, relationships, and usable options. Review a dependency and the alternatives actually available to decide whether this is a useful area to work on.',
+    functional: 'You reported some consistency in resources, relationships, and usable options, with room to build. Check this pattern against a dependency and the alternatives actually available.',
+    capable: 'You usually report the behaviors supporting resources, relationships, and usable options. That meets this framework’s 8 standard; review a dependency and the alternatives actually available to understand where the pattern holds.',
+    proven: 'You reported frequent consistency in resources, relationships, and usable options. The score sits in the Proven range, but evidence is needed before treating that label as earned. Document a dependency and the alternatives actually available.',
+    exceptional: 'You consistently endorsed the behaviors supporting resources, relationships, and usable options. This is the top self-report range, not evidence of exceptional ability relative to others. Document a dependency and the alternatives actually available and seek grounded feedback.',
   },
   measure: {
-    breakpoint:
-      'Your current physical, psychological, or operational capacity may fail under meaningful demand. Immediate focus should be on basic reliability, recovery, and the ability to remain useful.',
-    constraint:
-      'You can handle ordinary demands, but stress, fatigue, discomfort, or physical limitations regularly reduce your usefulness. Measure is restricting what the rest of your capability can carry.',
-    functional:
-      'You have useful capacity and resilience, but consistency under higher demand is not yet dependable. Your next step is to turn occasional performance into reliable readiness.',
-    capable:
-      'Your body, energy, resilience, and composure generally support your responsibilities. You can usually remain useful when demand rises.',
-    proven:
-      'You have repeatedly demonstrated physical and psychological reliability under real pressure. Measure is an established advantage, not merely an appearance.',
-    exceptional:
-      'Your capacity under demand is rare, repeatable, and externally evident. You can carry substantial pressure while remaining useful and helping stabilise others.',
+    breakpoint: 'You reported that behaviors supporting energy, recovery, and capacity under demand are rarely dependable. Start by reviewing a demanding week and the support that helped; choose one manageable change.',
+    constraint: 'Your responses suggest inconsistency in energy, recovery, and capacity under demand. Review a demanding week and the support that helped to decide whether this is a useful area to work on.',
+    functional: 'You reported some consistency in energy, recovery, and capacity under demand, with room to build. Check this pattern against a demanding week and the support that helped.',
+    capable: 'You usually report the behaviors supporting energy, recovery, and capacity under demand. That meets this framework’s 8 standard; review a demanding week and the support that helped to understand where the pattern holds.',
+    proven: 'You reported frequent consistency in energy, recovery, and capacity under demand. The score sits in the Proven range, but evidence is needed before treating that label as earned. Document a demanding week and the support that helped.',
+    exceptional: 'You consistently endorsed the behaviors supporting energy, recovery, and capacity under demand. This is the top self-report range, not evidence of exceptional ability relative to others. Document a demanding week and the support that helped and seek grounded feedback.',
   },
   mastery: {
-    breakpoint:
-      'Self-command or leadership reliability is not yet strong enough for significant responsibility. The first task is to govern your own behaviour before expanding what or whom you lead.',
-    constraint:
-      'You may carry responsibility, but inconsistency in standards, communication, emotional control, or follow-through is limiting trust and leadership effectiveness.',
-    functional:
-      'You can lead yourself and others in ordinary conditions, but your standards and stewardship are not yet reliable enough across conflict, pressure, and difficult decisions.',
-    capable:
-      'Your self-command, communication, standards, and follow-through generally support meaningful leadership and responsibility.',
-    proven:
-      'People and outcomes have repeatedly benefited from your leadership, standards, and stewardship. Mastery is an established advantage.',
-    exceptional:
-      'Your self-command and leadership are unusually consistent, externally trusted, and transferable. You develop capability in other people, not only in yourself.',
+    breakpoint: 'You reported that behaviors supporting self-command, communication, and follow-through are rarely dependable. Start by reviewing a commitment and what you did to keep it; choose one manageable change.',
+    constraint: 'Your responses suggest inconsistency in self-command, communication, and follow-through. Review a commitment and what you did to keep it to decide whether this is a useful area to work on.',
+    functional: 'You reported some consistency in self-command, communication, and follow-through, with room to build. Check this pattern against a commitment and what you did to keep it.',
+    capable: 'You usually report the behaviors supporting self-command, communication, and follow-through. That meets this framework’s 8 standard; review a commitment and what you did to keep it to understand where the pattern holds.',
+    proven: 'You reported frequent consistency in self-command, communication, and follow-through. The score sits in the Proven range, but evidence is needed before treating that label as earned. Document a commitment and what you did to keep it.',
+    exceptional: 'You consistently endorsed the behaviors supporting self-command, communication, and follow-through. This is the top self-report range, not evidence of exceptional ability relative to others. Document a commitment and what you did to keep it and seek grounded feedback.',
   },
 }
 
@@ -119,7 +95,7 @@ export const THIRTY_DAY_PLANS: Record<MKey, Plan> = {
       {
         title: 'Build One Multiplier',
         detail:
-          'Select one high-leverage improvement — a valuable skill, an automation, a system, a key relationship, a financial buffer, or an owned asset — and work on it every week.',
+          'Select one high-leverage improvement, a valuable skill, an automation, a system, a key relationship, a financial buffer, or an owned asset, and work on it every week.',
       },
       {
         title: 'Create One New Option',
@@ -191,7 +167,7 @@ export const INTENSITY_BY_BAND: Record<Band, string> = {
   proven:
     'Compound and transfer. Use the strength more deliberately, document evidence, and help others where appropriate.',
   exceptional:
-    'Steward. Maintain humility, guard against overconfidence, and use exceptional capability to develop people, systems, or institutions beyond yourself.',
+    'Steward. Maintain humility, guard against overconfidence, and use your reported strengths to develop people, systems, or institutions beyond yourself.',
 }
 
 /** One immediate action the participant can begin this week. */

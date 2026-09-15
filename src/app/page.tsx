@@ -3,7 +3,6 @@ import FourMChapter from '@/components/home/FourMChapter'
 import TheGap from '@/components/home/TheGap'
 import ProofOfRange from '@/components/home/ProofOfRange'
 import IdeasSection from '@/components/home/IdeasSection'
-import BooksModule from '@/components/home/BooksModule'
 import WorkWithNeil from '@/components/home/WorkWithNeil'
 import CommunitySection from '@/components/home/CommunitySection'
 import Closing from '@/components/home/Closing'
@@ -25,7 +24,6 @@ export default function HomePage() {
       <TheGap />
       <ProofOfRange />
       <IdeasSection />
-      <BooksModule />
       <WorkWithNeil />
       <CommunitySection />
       <Closing />

@@ -17,7 +17,11 @@ export default function OrganizationsPage() {
         eyebrow="Work With Neil / Organizations"
         title="Most organizations buy tools. Fewer build judgment."
         lead="AI and security failures are rarely purely technical. They are capability failures: the responsibility a team carries has outgrown the judgment, systems, and readiness available to answer it."
-      />
+      >
+        <Button href="/contact?reason=organization" variant="primary" size="lg" className="mt-8">
+          Start an inquiry
+        </Button>
+      </PageHero>
 
       <Section index="01" ground="ink-sunken" topRule>
         <h2 className="max-w-2xl font-display text-[2rem] font-bold leading-[1.1] tracking-[-0.03em] text-bone-50 md:text-4xl">
@@ -28,10 +32,10 @@ export default function OrganizationsPage() {
             ['AI adoption and judgment', 'Where AI creates leverage, where it creates exposure, and how to tell the difference before it is in production.'],
             ['Cybersecurity and digital risk', 'Risk, resilience, systems, and failure points, including the ones that are organisational rather than technical.'],
             ['Strategy and advisory', 'Decision quality under uncertainty, single points of dependence, and building optionality into how the business operates.'],
-            ['Workshops and executive education', 'The Four M framework applied to a leadership team, with a measured baseline and a retest.'],
+            ['Workshops and executive education', 'The Four M framework applied to a leadership team, with self-reported development priorities and a later review.'],
           ].map(([title, body]) => (
             <li key={title} className="bg-ink-950 p-7 md:p-9">
-              <h3 className="font-display text-xl font-normal text-bone-50">{title}</h3>
+              <h3 className="font-display text-xl font-semibold text-bone-50">{title}</h3>
               <p className="mt-3 text-[0.9375rem] leading-relaxed text-text-muted">{body}</p>
             </li>
           ))}
@@ -47,9 +51,8 @@ export default function OrganizationsPage() {
             <ul className="mt-8 space-y-5">
               {[
                 ['Advisory retainer', 'Ongoing counsel to a leadership team on technology, risk, and capability decisions.'],
-                ['Assessment and roadmap', 'A defined engagement producing a measured picture and a prioritised plan.'],
+                ['Assessment and roadmap', 'A defined engagement to examine your current environment and develop a prioritised plan.'],
                 ['Workshop or executive session', 'A single session or short series, applied to your actual environment.'],
-                ['Keynote', 'See the speaking page.'],
               ].map(([m, d]) => (
                 <li key={m} className="border-l border-hairline-bright pl-5">
                   <p className="font-display text-lg text-bone-50">{m}</p>
@@ -75,11 +78,38 @@ export default function OrganizationsPage() {
               discipline, and resilience.
             </p>
             <p className="mt-5 text-[0.9375rem] leading-relaxed text-text-muted">
-              Specific client work and engagement references are shared directly
-              rather than published, for confidentiality reasons.
+              To discuss fit, describe the decision your team faces, the systems
+              involved, and the timeframe. Agree scope and the evidence needed
+              before an engagement begins.
             </p>
           </div>
         </div>
+      </Section>
+
+      <Section ground="bone" topRule>
+        <h2 className="font-display text-3xl font-bold text-ink-on-bone md:text-4xl">
+          A sample executive session
+        </h2>
+        <p className="mt-5 max-w-2xl text-base leading-relaxed">
+          An illustrative agenda for a team considering an AI use case. This is
+          an example of how a session could be structured, not a record of a
+          past client engagement.
+        </p>
+        <ol className="mt-8 max-w-3xl divide-y divide-hairline-on-bone">
+          {[
+            ['Define the decision', 'Identify the proposed use, its owner, and what a useful result would look like.'],
+            ['Examine the exposure', 'Map the information involved, the people affected, and the consequences of a wrong answer.'],
+            ['Set the review', 'Outline human review, escalation, and a bounded next experiment.'],
+          ].map(([title, detail], i) => (
+            <li key={title} className="grid gap-2 py-5 sm:grid-cols-[2rem_1fr]">
+              <span className="font-mono text-sm text-bronze-600">{i + 1}.</span>
+              <div>
+                <h3 className="font-display text-xl font-semibold text-ink-on-bone">{title}</h3>
+                <p className="mt-2 text-base leading-relaxed">{detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </Section>
 
       <section className="border-t border-hairline bg-ink-950 py-24 text-center md:py-32">

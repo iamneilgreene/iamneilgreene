@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import Section from '@/components/layout/Section'
 import Container from '@/components/layout/Container'
 import Button from '@/components/ui/Button'
-import { BOOKS, CTA_PRIMARY } from '@/lib/constants'
+import { BOOKS } from '@/lib/constants'
 
 const DETAIL: Record<string, { lead: string; points: string[] }> = {
   exposed: {
@@ -112,11 +112,12 @@ export default async function BookPage({
 
           <div className="mt-12 border border-hairline bg-ink-900 p-6">
             <p className="text-[0.9375rem] leading-relaxed text-text-muted">
-              Purchase links are being set up. In the meantime, the Capability
-              Profile will tell you which dimension this book speaks to for you.
+              {book.slug === 'ignite'
+                ? 'Find the available formats and current price on Amazon.'
+                : 'Ask Neil about getting a copy of Exposed.'}
             </p>
-            <Button href={CTA_PRIMARY.href} variant="primary" size="md" className="mt-5">
-              {CTA_PRIMARY.label}
+            <Button href={book.slug === 'ignite' ? 'https://www.amazon.com/dp/B0DGLKT5RT' : '/contact?reason=other'} variant="primary" size="md" className="mt-5">
+              {book.slug === 'ignite' ? 'View Ignite on Amazon' : 'Ask about Exposed'}
             </Button>
           </div>
 
