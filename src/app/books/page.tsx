@@ -46,8 +46,7 @@ export default function BooksPage() {
                   )}
                 </div>
 
-                <p className="label label-bronze mt-6">{book.domain}</p>
-                <h2 className="mt-3 font-display text-3xl font-bold text-bone-50">
+                <h2 className="mt-6 font-display text-3xl font-bold text-bone-50">
                   {book.title}
                 </h2>
                 {'subtitle' in book && book.subtitle && (

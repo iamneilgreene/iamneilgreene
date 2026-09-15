@@ -79,8 +79,7 @@ export default async function BookPage({
             </div>
 
             <div>
-              <p className="label label-bronze">{book.domain}</p>
-              <h1 className="mt-6 font-display text-[2.5rem] font-bold leading-[1.05] tracking-[-0.03em] text-bone-50 md:text-6xl">
+              <h1 className="font-display text-[2.5rem] font-bold leading-[1.05] tracking-[-0.03em] text-bone-50 md:text-6xl">
                 {book.title}
               </h1>
               {'subtitle' in book && book.subtitle && (

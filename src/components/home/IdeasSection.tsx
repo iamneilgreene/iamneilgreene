@@ -1,16 +1,17 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Container from '@/components/layout/Container'
 
 export default function IdeasSection() {
   return (
     <section className="border-t border-hairline-on-bone bg-bone-50 py-14 text-ink-on-bone-body md:py-20">
       <Container>
-        <div className="grid gap-6 md:grid-cols-[1fr_1fr] md:items-center md:gap-20">
-          <h2 className="max-w-lg font-display text-3xl font-bold leading-[1.1] tracking-[-0.03em] text-ink-on-bone md:text-4xl">
+        <div className="grid gap-8 md:grid-cols-[1fr_1fr] md:items-center md:gap-16">
+          <div className="md:order-2">
+            <h2 className="max-w-lg font-display text-3xl font-bold leading-[1.1] tracking-[-0.03em] text-ink-on-bone md:text-4xl">
             Ideas that expand capability.
-          </h2>
-          <div>
-            <p className="max-w-lg text-base leading-relaxed">
+            </h2>
+            <p className="mt-5 max-w-lg text-base leading-relaxed">
               The first essays are in development. Explore the four areas that
               will guide the library, or explore Neil’s books.
             </p>
@@ -18,6 +19,7 @@ export default function IdeasSection() {
               See the Ideas topics <span aria-hidden="true">→</span>
             </Link>
           </div>
+          <Image src="/images/ideas-working-page-v1.webp" alt="" width={1200} height={800} sizes="(min-width: 768px) 45vw, 100vw" className="h-auto w-full md:order-1" />
         </div>
       </Container>
     </section>

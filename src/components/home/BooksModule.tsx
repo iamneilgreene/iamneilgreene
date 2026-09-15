@@ -49,9 +49,6 @@ export default function BooksModule() {
                   <p className="mt-5 text-center font-display text-lg font-semibold uppercase tracking-[0.04em] text-ink-on-bone">
                     {book.title}
                   </p>
-                  <p className="mt-1 text-center font-mono text-[0.5625rem] uppercase tracking-[0.14em] text-ink-on-bone-muted">
-                    {book.domain}
-                  </p>
                 </Link>
               </Reveal>
             ))}

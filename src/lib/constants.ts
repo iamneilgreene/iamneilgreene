@@ -157,7 +157,6 @@ export interface Book {
   slug: string
   title: string
   subtitle?: string
-  domain: string
   blurb: string
   /** Null while a cover does not exist yet. Consumers render a typographic
       plate instead, so this must stay nullable even when every book has one. */
@@ -168,7 +167,6 @@ export const BOOKS: readonly Book[] = [
   {
     slug: 'exposed',
     title: 'Exposed',
-    domain: 'Mind + Means',
     blurb:
       'Digital risk, technology, security, and the leadership judgment required when systems fail.',
     subtitle: 'Inside Risks and the New Architecture of AI Defense',
@@ -178,7 +176,6 @@ export const BOOKS: readonly Book[] = [
     slug: 'ignite',
     title: 'Ignite',
     subtitle: 'Fitness Fuel for Working Dads',
-    domain: 'Measure + Mastery',
     blurb:
       'Performance, discipline, and resilience for people whose responsibilities arrived before their capacity did.',
     cover: '/images/ignite-cover.webp',
