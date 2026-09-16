@@ -95,6 +95,12 @@ preferences. Keep cancellation and unsubscribe independent, and retain the
 explanation that provider-accepted mail cannot be recalled. Follow the user's
 no-em-dash rule in all interface and email copy.
 
-The council review records local database tests and mocked browser/mail evidence.
-Production activation requires live checks; authentic speaking/advisory evidence still requires user input. These
-documents do not establish a completed production lifecycle or a 98% result.
+Production activation completed September 16, 2026 UTC on deployment
+`dpl_25ubbKSeeei2nymZJ3qiCWsZoTCx` (application commit `60649fa`).
+Live checks verified the profile endpoint, explicit/idempotent confirmation,
+independent cancellation/unsubscribe, revoked links, stable CRM IDs, and one
+controlled reminder accepted by SMTP with no repeat on the next run. The setup
+contact ends unsubscribed with no pending reminder. Vercel confirms the daily
+13:00 UTC cron is enabled. Inbox receipt/rendering and a full browser-originated
+opt-in journey remain separate verification work. Authentic speaking/advisory
+proof remains unavailable. The council score is 97.0/100, below the 98% target.
