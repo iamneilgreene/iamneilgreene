@@ -27,7 +27,12 @@ export function validateEmailProfile(value: unknown): EmailProfile | null {
   return { scores, demands, selectedPriority: priority as MKey | null, completedAt: fields.completedAt as string | undefined }
 }
 
-export function profileEmailText(name: string, profile: EmailProfile): string {
+export type EmailPreferenceLinks = { verificationUrl: string; managementUrl: string; reminderRequested: boolean; marketingRequested: boolean }
+function pendingPreferenceText(preferences?: EmailPreferenceLinks) {
+  if (!preferences) return ''
+  return `You requested ${[preferences.reminderRequested ? 'one reminder around 75 days from this request' : '', preferences.marketingRequested ? 'educational updates' : ''].filter(Boolean).join(' and ')}. Confirm your email and these choices within 48 hours. Nothing is activated by simply opening the link.\nConfirm: ${preferences.verificationUrl}\nManage or cancel: ${preferences.managementUrl}`
+}
+export function profileEmailText(name: string, profile: EmailProfile, preferences?: EmailPreferenceLinks): string {
   const result = buildResult(profile.scores, profile.demands)
   const nameOf = (key: MKey) => DIMENSIONS.find(d => d.key === key)!.name
   const lines = [
@@ -48,6 +53,7 @@ export function profileEmailText(name: string, profile: EmailProfile): string {
     lines.push(`Your 30-day starting plan: ${nameOf(priority)}`, plan.objective, plan.why, '', ...plan.actions.flatMap((a, i) => [`${i + 1}. ${a.title}`, a.detail, '']), `Evidence to look for: ${plan.evidence}`, '')
   } else lines.push('Your responses do not establish one clear priority. Choose an area in your browser to see its 30-day plan; all score interpretations are included above.', '')
   lines.push('Return in about 75 days to compare your responses with concrete changes in behavior. No automatic reminder has been scheduled. Use the calendar download in your browser if you want a reminder.', '', 'Your raw assessment answers and written evidence are not included in this email.', 'Requesting this copy does not subscribe you to educational updates unless you separately checked that option.', '', 'Questions? Reply to hello@iamneilgreene.com.', 'https://www.iamneilgreene.com/capability-profile')
+  if (preferences) lines.push('', pendingPreferenceText(preferences))
   return lines.join('\n')
 }
 
@@ -55,7 +61,7 @@ export function profileEmailText(name: string, profile: EmailProfile): string {
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!))
 
 /** Table layout and inline styles keep the report readable without external assets. */
-export function profileEmailHtml(name: string, profile: EmailProfile): string {
+export function profileEmailHtml(name: string, profile: EmailProfile, preferences?: EmailPreferenceLinks): string {
   const result = buildResult(profile.scores, profile.demands)
   const nameOf = (key: MKey) => DIMENSIONS.find(d => d.key === key)!.name
   const priority = profile.selectedPriority ?? (result.priorityCandidates.length === 1 ? result.priorityCandidates[0] : null)
@@ -89,6 +95,7 @@ ${paragraph('All four dimensions must reach 8.0 or higher. These are self-report
 ${paragraph(`Highest reported areas: ${result.advantages.map(nameOf).join(', ')}.`)}
 ${planHtml}
 ${heading('What your scores mean')}${interpretations}
+${preferences ? heading('Confirm your email choices') + paragraph(`You requested ${[preferences.reminderRequested ? 'one reminder around 75 days from this request' : '', preferences.marketingRequested ? 'educational updates' : ''].filter(Boolean).join(' and ')}. Confirm within 48 hours to activate your choices. Opening the page does not confirm them.`) + `<p style="font:16px/1.7 Arial,sans-serif;"><a href="${escapeHtml(preferences.verificationUrl)}" style="color:#214da8;font-weight:bold;">Confirm email and choices</a><br><a href="${escapeHtml(preferences.managementUrl)}" style="color:#214da8;">Manage or cancel email choices</a></p>` : ''}
 ${heading('Return in about 75 days')}${paragraph('Compare your responses with concrete changes in behavior. No automatic reminder has been scheduled. Use the calendar download in your browser if you want a reminder.')}
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0;"><tr><td bgcolor="#214da8" style="background-color:#214da8;"><a href="https://www.iamneilgreene.com/capability-profile/start" style="display:inline-block;padding:15px 20px;border:1px solid #214da8;font:bold 16px/1.4 Arial,Helvetica,sans-serif;color:#faf7f3;text-decoration:none;">Visit the Capability Profile</a></td></tr></table>
 ${paragraph('Your saved results are available only in the browser where you completed the profile. On another device, the link opens a new assessment.')}
