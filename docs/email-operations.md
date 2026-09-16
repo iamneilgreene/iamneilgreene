@@ -3,14 +3,17 @@
 ## Activation
 
 This change needs an isolated Postgres database before production deployment.
-The intended resource is Neon Free (`free_v3`) through the linked Vercel project.
-Vercel requires the account owner to accept the marketplace terms first.
+The production resource is the dedicated Supabase Free project `iamneilgreene`
+(`rzewbtkmdlzwpcebrzmh`, us-west-2) in the Neil Greene organization.
+The Data API is disabled, RLS is enabled, and anonymous/authenticated roles have no table privileges.
 
-1. Provision `iamneilgreene-email`, region `iad1`, built-in auth disabled, production only.
+1. Use the project transaction pooler with prepared statements disabled.
 2. Keep secrets in ignored local env files and Vercel sensitive production variables.
    Use `EMAIL_DATABASE_URL` (or the integration's `DATABASE_URL`/`POSTGRES_URL`),
    `EMAIL_TOKEN_SECRET` (at least 32 cryptographically random characters), and `CRON_SECRET`.
-3. Run `npm run db:email` to apply `db/001_email_lifecycle.sql` atomically over a single private Postgres connection. It only
+   `EMAIL_DATABASE_CA_BASE64` contains the base64-encoded Supabase root CA from the dashboard.
+   Certificate and hostname verification remain enabled.
+3. Run `npm run db:email` to apply `supabase/migrations/20260916020024_secure_email_tables.sql` atomically over a single private Postgres connection. It only
    creates the four `ng_email_*` tables and their indexes. Keep the database private.
 4. Verify schema, a real opt-in/confirmation/cancellation with the approved test inbox,
    and CRM note updates. Deploy only after configuration and schema checks pass.
@@ -93,6 +96,5 @@ explanation that provider-accepted mail cannot be recalled. Follow the user's
 no-em-dash rule in all interface and email copy.
 
 The council review records local database tests and mocked browser/mail evidence.
-Production activation still requires Neon terms acceptance, provisioning and live
-checks; authentic speaking/advisory evidence still requires user input. These
+Production activation requires live checks; authentic speaking/advisory evidence still requires user input. These
 documents do not establish a completed production lifecycle or a 98% result.
