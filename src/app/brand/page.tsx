@@ -4,7 +4,7 @@ import Container from '@/components/layout/Container'
 import NGMark from '@/components/brand/NGMark'
 
 export const metadata: Metadata = {
-  title: 'Monogram — Neil Greene',
+  title: 'Monogram | Neil Greene',
   robots: { index: false },
 }
 
@@ -43,7 +43,7 @@ export default function LogoPreviewPage() {
         <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-text-body">
           Built as geometry from the reference locked in the wireframe doc.
           Reference on the left, vector on the right, then the mark run down to
-          16px — the favicon test.
+          16px: the favicon test.
         </p>
 
         {/* Reference vs vector */}

@@ -2,7 +2,7 @@ import { isCrmConfigured, savePersonWithNote, validateContact } from '../../../l
 
 import { claimProfileEmail } from '../../../lib/emailThrottle'
 import { isMailConfigured, sendWebsiteMail } from '../../../lib/mail'
-import { validateEmailProfile, profileEmailText } from '../../../lib/profileEmail'
+import { validateEmailProfile, profileEmailText, profileEmailHtml } from '../../../lib/profileEmail'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     if (!isMailConfigured()) return reply({ error: 'Profile email is temporarily unavailable. You can still save your profile in your browser.' }, 503)
     if (!claimProfileEmail(contact.email)) return reply({ error: 'Please wait a minute before requesting another profile email.' }, 429)
     try {
-      await sendWebsiteMail({ to: contact.email, subject: 'Your Four M Capability Profile', text: profileEmailText(contact.name, profile) })
+      await sendWebsiteMail({ to: contact.email, subject: 'Your Four M Capability Profile', text: profileEmailText(contact.name, profile), html: profileEmailHtml(contact.name, profile) })
     } catch { return reply({ error: 'We could not confirm your profile email was accepted. You can save a copy in your browser or try again later.' }, 502) }
     let consentSaved = false
     if (value.consent === true) {

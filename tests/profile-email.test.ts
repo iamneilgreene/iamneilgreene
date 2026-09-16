@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import nodemailer from 'nodemailer'
-import { validateEmailProfile, profileEmailText } from '../src/lib/profileEmail'
+import { validateEmailProfile, profileEmailText, profileEmailHtml } from '../src/lib/profileEmail'
 import { POST } from '../src/app/api/profile-subscription/route'
 
 const profile = { scores: { mind: 6, means: 6, measure: 8, mastery: 9 }, demands: null, selectedPriority: null }
@@ -30,7 +30,22 @@ test('profile copy does not require marketing consent; SMTP rejection cannot cla
       const result = await response.json()
       assert.equal(result.email, accepted ? 'accepted' : undefined)
       assert.doesNotMatch(String(message?.text), /private-do-not-send/)
+      assert.match(String(message?.html), /<!doctype html>/)
+      assert.doesNotMatch(String(message?.html), /private-do-not-send/)
       assert.deepEqual(message?.to, { address: recipient, name: '' })
     }
   } finally { nodemailer.createTransport = previous; process.env = env }
+})
+
+
+test('HTML email escapes personal text and includes the selected plan without em dashes', () => {
+  const selected = { ...profile, selectedPriority: 'mind' as const }
+  const html = profileEmailHtml('<img src=x onerror=alert(1)> & Test', selected)
+  assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt; &amp; Test/)
+  assert.doesNotMatch(html, /<img|<script|—/)
+  assert.match(html, /Your 30-day plan: Mind/)
+  assert.match(html, /<caption[^>]*>Your scores<\/caption>/)
+  assert.match(html, /No automatic reminder has been scheduled/)
+  assert.doesNotMatch(profileEmailText('Test', selected), /—/)
+  assert.match(profileEmailHtml('Test', profile), /Choose where to begin/)
 })

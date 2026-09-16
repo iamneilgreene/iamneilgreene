@@ -5,7 +5,7 @@ export function isMailConfigured() {
 }
 
 /** Credentials remain server-side. Never enable SMTP debug logging here. */
-export async function sendWebsiteMail(input: { to: string; subject: string; text: string; replyTo?: string }) {
+export async function sendWebsiteMail(input: { to: string; subject: string; text: string; html?: string; replyTo?: string }) {
   if (!isMailConfigured()) throw new Error('Email service unavailable')
   const transport = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -27,6 +27,7 @@ export async function sendWebsiteMail(input: { to: string; subject: string; text
       replyTo: { address: input.replyTo ?? process.env.MAIL_FROM!, name: '' },
       subject: input.subject,
       text: input.text,
+      html: input.html,
     })
     if (!receipt.accepted.some((address) => String(address).toLowerCase() === input.to.toLowerCase()) || receipt.rejected.length) throw new Error('Email acceptance not confirmed')
     return { accepted: true as const }
