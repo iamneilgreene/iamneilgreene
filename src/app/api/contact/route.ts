@@ -1,7 +1,9 @@
 import { createPersonWithNote, isCrmConfigured, validateContact } from '../../../lib/crm'
 
+import { sendWebsiteMail } from '../../../lib/mail'
+
 export const runtime = 'nodejs'
-export const maxDuration = 30
+export const maxDuration = 60
 const MAX_BODY_BYTES = 16_384
 const json = (body: Record<string, unknown>, status: number) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } })
 
@@ -41,7 +43,14 @@ export async function POST(request: Request) {
   if (!isCrmConfigured()) return json({ error: 'The inquiry service is unavailable. Your text is still here; please use the email link below.' }, 503)
   try {
     await createPersonWithNote(inquiry)
-    return json({ success: true, receipt: 'saved' }, 201)
+    let notification = 'unconfirmed'
+    try {
+      if (process.env.CONTACT_NOTIFY_TO) {
+        await sendWebsiteMail({ to: process.env.CONTACT_NOTIFY_TO, replyTo: inquiry.email, subject: `Website inquiry: ${inquiry.reason}`, text: `Name: ${inquiry.name}\nEmail: ${inquiry.email}\nReason: ${inquiry.reason}\n\n${inquiry.message}` })
+        notification = 'accepted'
+      }
+    } catch { /* The inquiry is saved; do not ask visitors to create a duplicate. */ }
+    return json({ success: true, receipt: 'saved', notification }, 201)
   } catch {
     // An upstream timeout can occur after a partial save. Never claim non-delivery
     // or expose private request data, credentials, or the CRM's error body.

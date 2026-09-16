@@ -10,7 +10,7 @@ try {
   if (compiled.status !== 0) process.exitCode = compiled.status ?? 1
   else {
     const files = readdirSync(join(output, 'tests')).filter((file) => file.endsWith('.test.js')).map((file) => join(output, 'tests', file))
-    const result = spawnSync(process.execPath, ['--test', ...files], { stdio: 'inherit' })
+    const result = spawnSync(process.execPath, ['--test', ...files], { stdio: 'inherit', env: { ...process.env, NODE_PATH: join(process.cwd(), 'node_modules') } })
     process.exitCode = result.status ?? 1
   }
 } finally { rmSync(output, { recursive: true, force: true }) }

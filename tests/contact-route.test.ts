@@ -61,3 +61,18 @@ test('accepts the public Host when the framework uses an internal request URL', 
   assert.equal((await POST(req)).status, 400)
   assert.equal((await POST(request('{}', { origin: 'not-a-url' }))).status, 403)
 })
+
+test('notification failure preserves a complete saved inquiry receipt', async () => {
+  const oldFetch = globalThis.fetch
+  const env = { ...process.env }
+  Object.assign(process.env, { TWENTY_CRM_BASE_URL: 'https://crm.example.invalid', TWENTY_CRM_API_KEY: 'test-only', CONTACT_NOTIFY_TO: 'owner@example.invalid' })
+  delete process.env.SMTP_PASSWORD
+  let count = 0
+  globalThis.fetch = (async () => Response.json({ data: { [['createPerson', 'createNote', 'createNoteTarget'][count++]]: { id: '11111111-1111-4111-8111-111111111111' } } })) as typeof fetch
+  try {
+    const response = await POST(request(JSON.stringify(payload)))
+    assert.equal(response.status, 201)
+    assert.deepEqual(await response.json(), { success: true, receipt: 'saved', notification: 'unconfirmed' })
+    assert.equal(count, 3)
+  } finally { globalThis.fetch = oldFetch; process.env = env }
+})

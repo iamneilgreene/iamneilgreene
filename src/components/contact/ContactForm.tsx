@@ -40,7 +40,7 @@ export default function ContactForm() {
       const response = await fetch('/api/contact', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, reason, message }),
-        signal: AbortSignal.timeout(30_000),
+        signal: AbortSignal.timeout(60_000),
       })
       const payload = await response.json()
       if (!response.ok || payload.success !== true || payload.receipt !== 'saved') {

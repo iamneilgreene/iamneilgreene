@@ -50,13 +50,13 @@ export default function PrivacyPage() {
               Email
             </h2>
             <p className="mt-4">
-              If you subscribe after completing your profile, your name, email,
-              and permission to receive future educational updates are saved in
-              Neil&apos;s contact management system. Your assessment answers are
-              not included. Subscribing does not automatically email your profile
-              or schedule a reminder. You can save your profile and import a
-              calendar reminder yourself. Your email is not sold. You can withdraw
-              permission or request an export or deletion through the contact page.
+              When you request a profile email, your name, email, scores, responsibility
+              ratings, and selected starting area are processed to send your summary
+              through Hostinger. Raw answers and written evidence stay in your browser.
+              Educational updates require the separate optional checkbox; only your
+              name, email, and permission are saved in Neil&apos;s contact management system.
+              No automatic reminder is scheduled. Your email is not sold. You can
+              withdraw permission or request deletion through the contact page.
             </p>
           </div>
 
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
             </h2>
             <p className="mt-4">
               Contact inquiries save your name, email, chosen reason, and message
-              in Neil&apos;s contact management system so he can respond. Sending an
+              in Neil&apos;s contact management system and email them to Neil so he can respond. Sending an
               inquiry does not subscribe you to educational updates. Avoid including
               sensitive information that is not needed for your inquiry. Privacy
               questions can also go through the contact page.

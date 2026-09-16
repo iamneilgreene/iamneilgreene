@@ -187,7 +187,7 @@ export default function InstantResult({
             <p role="status" className="mt-3 text-sm text-text-muted">{chosenPriority ? `${nameOf(chosenPriority)} plan selected.` : 'No plan selected yet.'} {choiceStorageIssue && 'Browser storage is unavailable. Your plan choice may reset on reload; save a printed copy.'}</p>
           </fieldset>
         )}
-        <p className="mt-10 text-base leading-relaxed text-text-body">Your full profile is available below, in this browser. No email is sent. Save a copy for yourself and add a calendar reminder if you want to return.</p>
+        <p className="mt-10 text-base leading-relaxed text-text-body">Your full profile is available below, in this browser. You can request an email copy below. Save a copy for yourself and add a calendar reminder if you want to return.</p>
         <FullProfile
           result={result} priority={priority} priorityBand={priorityBand} plan={plan}
           expanded={expanded} setExpanded={setExpanded}
@@ -419,7 +419,7 @@ function FullProfile({
       <p className="mt-3 text-sm leading-relaxed text-text-muted">Printing lets you save a PDF. Import the downloaded file into your calendar to schedule a reminder; nothing is scheduled automatically. Browser storage can be cleared, and a score change alone does not prove capability changed.</p>
 
       {/* ── Next path ──────────────────────────────────────────────── */}
-      <ProfileSubscription />
+      <ProfileSubscription profile={{ scores: result.scores, demands: result.demands, selectedPriority: needsChoice ? null : priority, completedAt }} />
       <section className="mt-12">
         <p className="label">Where to go next</p>
         <ul className="mt-5 grid gap-px bg-hairline sm:grid-cols-2">
