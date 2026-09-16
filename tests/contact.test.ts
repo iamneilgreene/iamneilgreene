@@ -67,3 +67,25 @@ test('neutral note helper preserves consent text without relabeling it as an inq
   assert.equal(note?.title, 'Educational email consent')
   assert.equal((note?.bodyV2 as { markdown: string }).markdown, 'Explicit consent v1, synthetic timestamp')
 })
+
+test('verified email preference sync updates one stable CRM note on withdrawal',async()=>{
+  const { syncEmailPreferenceInCrm } = await import('../src/lib/crm')
+  const priorFetch=globalThis.fetch;const env={...process.env}
+  process.env.TWENTY_CRM_BASE_URL='https://crm.example.invalid';process.env.TWENTY_CRM_API_KEY='test-only'
+  const requests:{url:string;method:string;body:string}[]=[]
+  globalThis.fetch=(async(url,init)=>{
+    requests.push({url:String(url),method:init?.method||'',body:String(init?.body)})
+    const op=init?.method==='PATCH'?'updateNote':String(url).endsWith('people')?'createPerson':String(url).endsWith('notes')?'createNote':'createNoteTarget'
+    return Response.json({data:{[op]:{id:'11111111-1111-4111-8111-111111111111'}}})
+  }) as typeof fetch
+  let ids:{crm_person_id:string|null;crm_note_id:string|null;crm_target_id:string|null}={crm_person_id:null,crm_note_id:null,crm_target_id:null}
+  try {
+    await syncEmailPreferenceInCrm({...ids,name:'Test',email:'test@example.invalid',markdown:'OPTED IN'},async value=>{ids={...value}})
+    await syncEmailPreferenceInCrm({...ids,name:'Test',email:'test@example.invalid',markdown:'WITHDRAWN'},async value=>{ids={...value}})
+    assert.equal(requests.length,4)
+    assert.equal(requests.filter(r=>r.url.endsWith('/people')).length,1)
+    assert.equal(requests[3].method,'PATCH')
+    assert.match(requests[3].body,/WITHDRAWN/)
+    assert.match(requests[3].url,/notes\/11111111-/)
+  } finally {globalThis.fetch=priorFetch;process.env=env}
+})

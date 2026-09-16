@@ -416,7 +416,7 @@ function FullProfile({
         <Button type="button" variant="secondary" onClick={() => window.print()}>Print or save profile</Button>
         {reminder && <a className="inline-flex min-h-11 items-center border border-border-input px-5 py-3 text-base text-bone-50 hover:bg-ink-850" href={`data:text/calendar;charset=utf-8,${encodeURIComponent(reminder.calendar)}`} download="capability-retest.ics">Download calendar reminder</a>}
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-text-muted">Printing lets you save a PDF. Import the downloaded file into your calendar to schedule a reminder; nothing is scheduled automatically. Browser storage can be cleared, and a score change alone does not prove capability changed.</p>
+      <p className="mt-3 text-sm leading-relaxed text-text-muted">Printing lets you save a PDF. Import the downloaded file into your calendar to schedule a reminder. Downloading it alone does not schedule anything. Browser storage can be cleared, and a score change alone does not prove capability changed.</p>
 
       {/* ── Next path ──────────────────────────────────────────────── */}
       <ProfileSubscription profile={{ scores: result.scores, demands: result.demands, selectedPriority: needsChoice ? null : priority, completedAt }} />

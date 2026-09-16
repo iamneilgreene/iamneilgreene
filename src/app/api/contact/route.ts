@@ -1,5 +1,6 @@
 import { createPersonWithNote, isCrmConfigured, validateContact } from '../../../lib/crm'
 
+import { limitEmailRequest } from '../../../lib/emailLifecycle'
 import { sendWebsiteMail } from '../../../lib/mail'
 
 export const runtime = 'nodejs'
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
   if (!inquiry) return json({ error: 'Check your name, email, reason, and message. Messages can contain up to 4,000 characters.' }, 400)
   if (!isCrmConfigured()) return json({ error: 'The inquiry service is unavailable. Your text is still here; please use the email link below.' }, 503)
   try {
+    if (!await limitEmailRequest(request, inquiry.email, 'contact')) return json({ error: 'Please wait before sending another inquiry. You can also use the email link below.' }, 429)
     await createPersonWithNote(inquiry)
     let notification = 'unconfirmed'
     try {

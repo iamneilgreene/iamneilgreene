@@ -53,10 +53,19 @@ export default function PrivacyPage() {
               When you request a profile email, your name, email, scores, responsibility
               ratings, and selected starting area are processed to send your summary
               through Hostinger. Raw answers and written evidence stay in your browser.
-              Educational updates require the separate optional checkbox; only your
-              name, email, and permission are saved in Neil&apos;s contact management system.
-              No automatic reminder is scheduled. Your email is not sold. You can
-              withdraw permission or request deletion through the contact page.
+              Reminders and educational updates have separate optional checkboxes.
+              They activate only after you deliberately confirm your email. One reminder
+              is scheduled for around 75 days after your request and can be cancelled.
+              Your name, email, confirmation, consent choices, and delivery status are
+              stored in our private email-preferences database; current verified
+              educational-email choices are also synchronized to Neil&apos;s contact system.
+              We do not store your assessment scores or answers in that database.
+              Private confirmation links expire after 48 hours. Unconfirmed requests
+              are removed after their expiry and a seven-day cleanup period.
+              Spam limits use short-lived keyed hashes of email addresses and network
+              addresses, not raw network addresses. Your email is not sold. Use the
+              private management link to unsubscribe or cancel; contact us for deletion.
+
             </p>
           </div>
 

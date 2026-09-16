@@ -1,4 +1,8 @@
-import { test } from 'node:test'
+import { test, mock } from 'node:test'
+import * as lifecycle from '../src/lib/emailLifecycle'
+import * as emailDb from '../src/lib/emailDb'
+mock.method(lifecycle, 'limitEmailRequest', async () => true)
+mock.method(emailDb, 'isEmailDbConfigured', () => true)
 import assert from 'node:assert/strict'
 import { POST } from '../src/app/api/contact/route'
 

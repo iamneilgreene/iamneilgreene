@@ -11,7 +11,7 @@ export function validateContact(value: unknown): ContactInquiry | null {
     if (typeof field !== 'string' || !field.trim() || field.length > maximum || /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(field)) return null
   }
   const inquiry = Object.fromEntries(Object.keys(limits).map((key) => [key, (fields[key] as string).trim()])) as ContactInquiry
-  if (/[\r\n]/.test(inquiry.name) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inquiry.email)) return null
+  if (/[<>,;\r\n]/.test(inquiry.email) || /[\r\n]/.test(inquiry.name) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inquiry.email)) return null
   if (!CONTACT_REASONS.some((reason) => reason === inquiry.reason)) return null
   return inquiry
 }
@@ -71,4 +71,34 @@ export async function createPersonWithNote(inquiry: ContactInquiry, options?: Cr
     noteTitle: `Website inquiry: ${inquiry.reason}`,
     noteMarkdown: `Inquiry type: ${inquiry.reason}\n\n${inquiry.message}`,
   }, options)
+}
+
+export type EmailCrmIds = { crm_person_id: string | null; crm_note_id: string | null; crm_target_id: string | null }
+/** A single stable person/note for each verified email contact. Persist each ID
+ * before the next write. Ambiguous failures are quarantined by the caller. */
+export async function syncEmailPreferenceInCrm(input: EmailCrmIds & { name: string; email: string; markdown: string }, persist: (ids: EmailCrmIds) => Promise<void>) {
+  const base = process.env.TWENTY_CRM_BASE_URL
+  const key = process.env.TWENTY_CRM_API_KEY
+  if (!base || !key || new URL(base).protocol !== 'https:') throw new Error('CRM unavailable')
+  const write = async (path: string, operation: string, body: unknown, method = 'POST') => {
+    const response = await fetch(`${base.replace(/\/$/, '')}/rest/${path}`, { method, headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(8000), redirect: 'error', cache: 'no-store' })
+    if (!response.ok) throw new Error('CRM sync not confirmed')
+    const id = (await response.json())?.data?.[operation]?.id
+    if (typeof id !== 'string' || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error('CRM sync not confirmed')
+    return id
+  }
+  const ids: EmailCrmIds = { crm_person_id: input.crm_person_id, crm_note_id: input.crm_note_id, crm_target_id: input.crm_target_id }
+  if (!ids.crm_person_id) {
+    ids.crm_person_id = await write('people', 'createPerson', { name: { firstName: input.name, lastName: '' }, emails: { primaryEmail: input.email } })
+    await persist(ids)
+  }
+  const note = { title: 'Website: current verified email preferences', bodyV2: { markdown: input.markdown, blocknote: JSON.stringify([{ id: crypto.randomUUID(), type: 'paragraph', props: {}, content: [{ type: 'text', text: input.markdown, styles: {} }], children: [] }]) } }
+  if (!ids.crm_note_id) {
+    ids.crm_note_id = await write('notes', 'createNote', note)
+    await persist(ids)
+  } else await write(`notes/${ids.crm_note_id}`, 'updateNote', note, 'PATCH')
+  if (!ids.crm_target_id) {
+    ids.crm_target_id = await write('noteTargets', 'createNoteTarget', { noteId: ids.crm_note_id, targetPersonId: ids.crm_person_id })
+    await persist(ids)
+  }
 }

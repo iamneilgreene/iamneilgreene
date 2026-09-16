@@ -18,7 +18,7 @@ Keep the score table semantic: caption, row headers, numeric scores, and visible
 - Derive interpretation from `buildResult`, bands from `bandFor`/`BANDS`, and plans from `THIRTY_DAY_PLANS`. Do not create email-specific scoring logic.
 - Preserve all `advantages` and `priorityCandidates`. Near ties use the framework's provisional 0.3 comparison tolerance, not a statistical confidence claim. Candidate order does not establish superiority. Priority selection considers urgent signals, then active demand gaps, then lowest scores; defer to the shared implementation.
 - Show the selected candidate's plan, or automatically show a plan only when there is exactly one candidate. An unresolved tie must invite a browser choice and include every score interpretation; never silently use the first candidate. Validation accepts a selected priority only from the computed candidates.
-- Keep the self-report limitations, 75-day retest guidance, explicit absence of an automatic reminder, exclusion of raw answers/written evidence, and separate educational-update consent language.
+- Keep the self-report limitations, 75-day retest guidance, accurate reminder status and required confirmation, exclusion of raw answers/written evidence, and separate educational-update consent language.
 - Maintain meaningful plain-text parity whenever changing HTML: scores, bands, demands, interpretations, highest areas, candidate choices, plan objective/why/actions/evidence, caveats, and navigation expectations. Presentation order may differ.
 - Saved results live in the completion browser. The email action is not a portable results link; another device opens a new assessment. Do not imply server-hosted result recovery.
 
@@ -29,3 +29,7 @@ Review disposition supplied with this handoff: ship. Browser captures exist at `
 For maintenance, preview mobile and desktop with a single priority, an unresolved tie, optional demands, and a name containing HTML-sensitive characters. Compare both message representations. For a client-compatibility claim, send and inspect the multipart message in the named clients.
 
 Existing drift observed, left unchanged: the email action/link colour (`#214da8`) is a local literal outside DESIGN.md's listed cobalt hex values. Plain text ends at `/capability-profile`, while the HTML action targets `/capability-profile/start`; plain text also omits the HTML's explicit same-browser recovery explanation and privacy link. These differences should be considered when next updating parity, without treating this document as authorization to change system tokens.
+
+## Optional follow-up choices
+
+`EmailPreferenceLinks` adds deliberate confirmation and management links when the recipient requests a reminder or educational updates. Both start pending. Opening a link does not activate them. Follow the lifecycle and activation instructions in `docs/email-operations.md`.
